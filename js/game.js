@@ -189,7 +189,7 @@ class Game {
       }
 
       //check if hitting a boulder
-      for (j = 0; j < this.boulders.length; j++) {
+      for (let j = 0; j < this.boulders.length; j++) {
         const hitBoulder = this.projectiles[i].isHitting(
           this.boulders[j].getAsset().getXCord(),
           this.boulders[j].getAsset().getYCord(),
