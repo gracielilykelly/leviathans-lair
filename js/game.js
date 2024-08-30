@@ -376,7 +376,7 @@ class Game {
     this.handleBoulders();
     this.handleEnemies();
     this.handlePickups();
-    this.scoreboard.render(player, submarine);
+    this.scoreboard.render(this.player, this.submarine);
     this.handleSubmarine();
   }
 
