@@ -343,7 +343,7 @@ class Game {
         if (enemy.getActionCanBeTaken()) {
           enemy
             .getShooter()
-            .shoot(
+            .shootMultiple(
               this.projectiles,
               getAvailableProjectileIndexes(enemy.getProjectileCount()),
               enemy.getAsset().getXCord(),

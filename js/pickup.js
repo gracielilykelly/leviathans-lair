@@ -11,26 +11,6 @@ class Pickup {
     this.asset = undefined;
   }
 
-  // default pickup
-//   public Pickup() {
-//     asset = new Asset(0, 0, 0, 0);
-//     size = 0;
-//     type = "HEART";
-//     size = 20;
-//     allow = false;
-//   }
-
-//   // pickup with specific co-ordinates and type
-//   public Pickup(float boulderXCord, float boulderYCord, String pickupType) {
-//     type = pickupType;
-//     size = 20;
-//     allow = false;
-//     show = false;
-//     speed = 3;
-//     asset = new Asset(boulderXCord, boulderYCord, size, speed);
-//     setPickupColorandIcon();
-//   }
-
   // getters
    getType() {
     return this.type;
@@ -101,7 +81,7 @@ class Pickup {
   render() {
     // display the pickup
     if (this.allow && this.show) {
-      textFont(this.iconFont, this.size);
+      textFont(iconFont, this.size);
       textAlign(CENTER, CENTER);
       noStroke();
       fill(this.fillColor);

@@ -78,16 +78,16 @@ class Projectile {
   }
 
 toggleIsFired() {
-    this.fired = !fired;
+    this.fired = !this.fired;
   }
 
    setProjectileSize(weapon) {
     /* Sets size based on weapon type pased
      params: weapon (String): type of weapon
      */
-    if (weapon.equals("FIRE")) {
+    if (weapon === "FIRE") {
       this.size = 20;
-    } else if (weapon.equals("BOLT") || weapon.equals("BOMB")) {
+    } else if (weapon === "BOLT" || weapon === "BOMB") {
       this.size = 15;
     } else {
         this.size = 7;
@@ -95,7 +95,7 @@ toggleIsFired() {
   }
 
    setIsEnemy(weapon) {
-    this.isEnemy = weapon.equals("FIRE") || weapon.equals("BOLT");
+    this.isEnemy = weapon === "FIRE" || weapon === "BOLT";
   }
 
   //methods
@@ -106,8 +106,8 @@ toggleIsFired() {
      yPos (float): y co-ordinate of item to check against
      s (int): the size of the item to check against
      */
-    this.distance = dist(this.xCord + size/2, this.yCord + size/2, xPos, yPos);
-    if (this.distance < s/2 + size) {
+    this.distance = dist(this.xCord + this.size/2, this.yCord + this.size/2, xPos, yPos);
+    if (this.distance < s/2 + this.size) {
       return true;
     }
     return false;
@@ -145,20 +145,20 @@ render() {
     // displays the projectile
     if (this.alive && this.fired) {
       // render enemy projectiles
-      textFont(iconFont, size);
-      if (this.weaponType.equals("BOLT")) {
+      textFont(iconFont, this.size);
+      if (this.weaponType === "BOLT") {
         fill(214, 162, 232);
         text("\uf0e7", this.xCord, this.yCord);
-      } else if (this.weaponType.equals("FIRE")) {
+      } else if (this.weaponType === "FIRE") {
         fill(255, 63, 52);
         text("\uf06d", this.xCord, this.yCord);
-      } else if (this.weaponType.equals("BOMB")) {
+      } else if (this.weaponType === "BOMB") {
         fill(253, 114, 114);
         text("\uf1e2", this,xCord, this,yCord);
       } else {
         // render submarine projectile
         fill(255);
-        ellipse(this,xCord, this.yCord, this.size, this.size);
+        ellipse(this.xCord, this.yCord, this.size, this.size);
       }
     }
   }

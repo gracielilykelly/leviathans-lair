@@ -1,27 +1,26 @@
 class Submarine {
-    constructor(){
-        this.xCord = width /2;
-        this.yCord = height / 2;
-        this.rotation = -HALF_PI;
-        // allows the ship to rotate a quarter circle at a time
-        this.rotationSpeed = QUARTER_PI;
-        this.travelSpeed = 0; // TODO: set travel speed
-        this.lives = 3;
-        this.maxLive = 3;
-        this.size = 30;
-        this.invincibilityTimer = 0;
-        this.subColor = (64, 224, 208);
-        this.invincible = false;
-        this.hasShield = false,
-        this.shieldActive = false,
-        this.isBoosting = false,
-        this.hasBomb = false,
-        this.missileShooter = new Shooter(this.travelSpeed == 0);
-        this.bombShooter = new Shooter(this.travelSpeed == 0, "BOMB");
-        
-        this.setColor(this.subColor);
-    }
+  constructor() {
+    this.xCord = width / 2;
+    this.yCord = height / 2;
+    this.rotation = -HALF_PI;
+    // allows the ship to rotate a quarter circle at a time
+    this.rotationSpeed = QUARTER_PI;
+    this.travelSpeed = 0; // TODO: set travel speed
+    this.lives = 3;
+    this.maxLive = 3;
+    this.size = 30;
+    this.invincibilityTimer = 0;
+    this.subColor = (64, 224, 208);
+    this.invincible = false;
+    (this.hasShield = false),
+      (this.shieldActive = false),
+      (this.isBoosting = false),
+      (this.hasBomb = false),
+      (this.missileShooter = new Shooter(this.travelSpeed == 0));
+    this.bombShooter = new Shooter(this.travelSpeed == 0, "BOMB");
 
+    this.setColor(this.subColor);
+  }
 
   // getters
   getXCord() {
@@ -113,7 +112,7 @@ class Submarine {
     this.travelSpeed = speed;
   }
 
-  setTravelSpeed() {
+  setTravelSpeedToZero() {
     this.travelSpeed = 0;
   }
 
@@ -122,12 +121,12 @@ class Submarine {
      params:
      keyCodePressed (int) - the key pressed by user
      */
-    if (keyCodePressed == LEFT) {
+    if (keyCodePressed == LEFT_ARROW) {
       // rotate left
-      this.rotation -= rotationSpeed;
-    } else if (keyCodePressed == RIGHT) {
+      this.rotation -= this.rotationSpeed;
+    } else if (keyCodePressed == RIGHT_ARROW) {
       // rotate right
-      this.rotation += rotationSpeed;
+      this.rotation += this.rotationSpeed;
     }
   }
 
@@ -147,7 +146,7 @@ class Submarine {
 
   setIsAllowedFireMissile() {
     // allow to shoot missile when not moving
-    this.missileShooter.setAllowFire(travelSpeed == 0);
+    this.missileShooter.setAllowFire(this.travelSpeed == 0);
   }
 
   deactivateShield() {
@@ -202,15 +201,15 @@ class Submarine {
       this.setXCord(this.size + 5);
     } else if (this.xCord >= width - this.size) {
       this.setXCord(width - (this.size + 5));
-    } else if (this.yCord <= scoreboardHeight + size) {
+    } else if (this.yCord <= scoreboardHeight + this.size) {
       this.setYCord(scoreboardHeight + (this.size + 5));
     } else if (this.yCord >= height - this.size) {
       this.setYCord(height - (this.size + 5));
     }
     // update the co-ordinates using the angle of the ship
     else {
-      this.setXCord(this.xCord + (cos(this.rotation) * this.travelSpeed));
-      this.setYCord(this.yCord + (sin(this.rotation) * this.travelSpeed));
+      this.setXCord(this.xCord + cos(this.rotation) * this.travelSpeed);
+      this.setYCord(this.yCord + sin(this.rotation) * this.travelSpeed);
     }
   }
 
@@ -243,7 +242,7 @@ class Submarine {
       textSize(20);
       fill(249, 127, 81);
       rotate(radians(225.0));
-      text("\uf7e4", 0, -32, 10);
+      text("\uf7e4", -15, -22, 10);
     }
   }
 
@@ -262,7 +261,7 @@ class Submarine {
         this.deactivateShield();
       } else {
         // lose a life
-        this.reduceLives(); 
+        this.reduceLives();
         this.setInvincibility(true);
       }
     }
