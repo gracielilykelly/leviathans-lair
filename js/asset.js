@@ -8,19 +8,19 @@ class Asset {
   }
 
   // create enemy/boulder asset
-  //  Asset( s,  a,  speed) {
-  //   size = s;
-  //   angle = a;
-  //   travelSpeed = speed;
-  // }
+  configureEnemyBoulderAsset(s, a, speed) {
+    this.size = s;
+    this.angle = a;
+    this.travelSpeed = speed;
+  }
 
-  // // create pickup asset
-  //  Asset( x,  y,  s,  speed) {
-  //   xCord = x;
-  //   yCord = y;
-  //   travelSpeed = speed;
-  //   size = s;
-  // }
+  // create pickup asset
+  configurePickupAsset(x, y, s, speed) {
+    this.xCord = x;
+    this.yCord = y;
+    this.travelSpeed = speed;
+    this.size = s;
+  }
 
   // getters
   getXCord() {
@@ -54,9 +54,9 @@ class Asset {
      should travel left or false if it should travel right
      */
     if (travelLeft) {
-      this.xCord -= travelSpeed;
+      this.xCord -= this.travelSpeed;
     } else {
-      this.xCord += travelSpeed;
+      this.xCord += this.travelSpeed;
     }
   }
 
@@ -66,9 +66,9 @@ class Asset {
      should travel up or false if it should travel down
      */
     if (travelUp) {
-      this.yCord -= travelSpeed;
+      this.yCord -= this.travelSpeed;
     } else {
-      this.yCord += travelSpeed;
+      this.yCord += this.travelSpeed;
     }
   }
 
@@ -83,16 +83,16 @@ class Asset {
 
     //spawn the asset top/bottom offscreen
     if (spawnTop) {
-      setYCord(-this.size);
+      this.setYCord(-this.size);
     } else {
-      setYCord(height + this.size);
+      this.setYCord(height + this.size);
     }
 
     // spawn the asset left/right offscreen
     if (spawnLeft) {
-      setXCord(-this.size);
+      this.setXCord(-this.size);
     } else {
-      setXCord(width + this.size);
+      this.setXCord(width + this.size);
     }
   }
 
@@ -120,20 +120,20 @@ class Asset {
     // set the co-ordinates
     if (spawnTop && spawnLeft) {
       // spawn top left
-      setXCord(random(leftMin, leftMax));
-      setYCord(random(topMin, topMax));
+      this.setXCord(random(leftMin, leftMax));
+      this.setYCord(random(topMin, topMax));
     } else if (spawnTop && !spawnLeft) {
       // spawn top right
-      setXCord(random(rightMax, rightMin));
-      setYCord(random(topMin, topMax));
+      this.setXCord(random(rightMax, rightMin));
+      this.setYCord(random(topMin, topMax));
     } else if (!spawnTop && spawnLeft) {
       // spawn bottom left
-      setXCord(random(this.size, leftMax));
-      setYCord(random(bottomMax, bottomMin));
+      this.setXCord(random(this.size, leftMax));
+      this.setYCord(random(bottomMax, bottomMin));
     } else {
       // spawn bottom right
-      setXCord(random(rightMax, rightMin));
-      setYCord(random(bottomMax, bottomMin));
+      this.setXCord(random(rightMax, rightMin));
+      this.setYCord(random(bottomMax, bottomMin));
     }
   }
 
@@ -153,13 +153,13 @@ class Asset {
      params: location (String) - the boundary of which to
      check (choices are TOP, LEFT, BOTTOM and RIGHT)
      */
-    if (location.equals("TOP")) {
+    if (location === "TOP") {
       return this.yCord < height / 15 + this.size / 2;
-    } else if (location.equals("LEFT")) {
+    } else if (location === "LEFT") {
       return this.xCord < this.size / 2;
-    } else if (location.equals("BOTTOM")) {
+    } else if (location === "BOTTOM") {
       return this.yCord > height - this.size / 2;
-    } else if (location.equals("RIGHT")) {
+    } else if (location === "RIGHT") {
       return this.xCord > width - this.size / 2;
     }
     return false;
@@ -192,24 +192,28 @@ class Asset {
         // go in other direction
         this.travelSpeed = -this.travelSpeed;
         if (this.isBeyondBoundary("LEFT")) {
-          setXCord(this.size / 2 + 5);
+          this.setXCord(this.size / 2 + 5);
         } else if (this.isBeyondBoundary("RIGHT")) {
-          setXCord(width - this.size / 2 - 5);
+          this.setXCord(width - this.size / 2 - 5);
         } else if (this.isBeyondBoundary("TOP")) {
-          setYCord(height / 15 + this.size / 2 + 5);
+          this.setYCord(height / 15 + this.size / 2 + 5);
         } else if (this.isBeyondBoundary("BOTTOM")) {
-          setYCord(height - this.size / 2 - 5);
+          this.setYCord(height - this.size / 2 - 5);
         }
       }
     } else if (!keepWithinBoundary) {
-      // let it  back o game boundary on opposite side
+      // let it back to game boundary on opposite side
       if (this.xCord < -this.size / 2) {
+        console.log(1);
         this.setXCord(width + this.size / 2);
       } else if (this.xCord > width + this.size / 2) {
+        console.log(2);
         this.setXCord(-this.size / 2);
       } else if (this.yCord < -this.size / 2) {
+        console.log(3);
         this.setYCord(height + this.size / 2);
       } else if (this.yCord > height + this.size / 2) {
+        console.log(4);
         this.setYCord(0);
       }
     }

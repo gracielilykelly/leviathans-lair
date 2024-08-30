@@ -1,7 +1,7 @@
 class Shooter {
-  constructor(){
-      this.allowFire = false;
-      this.weaponType;
+  constructor() {
+    this.allowFire = false;
+    this.weaponType;
   }
 
   // getters
@@ -22,24 +22,22 @@ class Shooter {
     this.allowFire = allowed;
   }
 
-
   // methods
-  shootSingle(
-    projectiles, index, 
-    xCord, yCord, angle) {
+  shootSingle(projectiles, index, xCord, yCord, angle) {
     // load and shoot single projectile
     if (this.allowFire) {
+      console.log("ALLOWED TO FIRE, CREATING PROJECTILE....");
       projectiles[index] = new Projectile(xCord, yCord, angle);
+      console.log(projectiles[index])
+      projectiles[index].asSubmarineBullet(xCord, yCord, angle);
+            console.log(projectiles[index]);
       projectiles[index].toggleIsFired();
+            console.log(projectiles[index]);
       projectiles[index].setIsEnemy(false);
     }
   }
 
-  shootMultiple(
-    projectiles, 
-    indexes, 
-    xCord, 
-    yCord) {
+  shootMultiple(projectiles, indexes, xCord, yCord) {
     // load and shoot multiple projectiles
 
     if (this.allowFire) {
@@ -51,13 +49,18 @@ class Shooter {
           a = 15 * i;
         } else if (this.weaponType.equals("FIRE")) {
           xCord = 200;
-          yCord = (270 + (30 * (i + 1)));
+          yCord = 270 + 30 * (i + 1);
         } else if (this.weaponType == "BOMB") {
-          a = (15 * (i + 1));
+          a = 15 * (i + 1);
           isEnemy = false;
         }
         // shoot missiles in direction chosen
-        projectiles[indexes[i]] = new Projectile(xCord, yCord, a, this.weaponType);
+        projectiles[indexes[i]] = new Projectile(
+          xCord,
+          yCord,
+          a,
+          this.weaponType
+        );
         projectiles[indexes[i]].toggleIsFired();
         projectiles[indexes[i]].setIsEnemy(isEnemy);
       }

@@ -235,14 +235,14 @@ class Submarine {
     fill(this.subColor);
     textFont(iconFont, 35);
     textAlign(CENTER, CENTER);
-    text("\uf135", -5, 0, 35);
+    text("\uf135", -20, 0, 35);
 
     if (this.isBoosting) {
       // draw boost flame
       textSize(20);
       fill(249, 127, 81);
       rotate(radians(225.0));
-      text("\uf7e4", -15, -22, 10);
+      text("\uf7e4", -5, -32, 10);
     }
   }
 

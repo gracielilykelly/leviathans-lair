@@ -1,5 +1,5 @@
 class Projectile {
-  constructor(){
+  constructor() {
     this.xCord = 0;
     this.yCord = 0;
     this.direction = 0;
@@ -18,16 +18,17 @@ class Projectile {
   }
 
   // submarine bullet
-  Projectile(x, y, dir) {
-    xCord = x;
-    yCord = y;
-    direction = dir;
-    alive = true;
-    fired = false;
-    weaponType = "";
-    travelSpeed = 3;
-    setIsEnemy(false);
-    setProjectileSize();
+  asSubmarineBullet(x, y, dir) {
+    console.log("SETTING AS SUB BULLET...");
+    this.xCord = x;
+    this.yCord = y;
+    this.direction = dir;
+    this.alive = true;
+    this.fired = false;
+    this.weaponType = "";
+    this.travelSpeed = 3;
+    this.setIsEnemy(false);
+    this.setProjectileSize();
   }
 
   // enemy and bomb projectile
@@ -56,32 +57,32 @@ class Projectile {
     return this.weaponType;
   }
 
-   getFired() {
+  getFired() {
     return this.fired;
   }
 
-   isInBounds() {
+  isInBounds() {
     return this.alive;
   }
 
-   isEnemy() {
+  isEnemy() {
     return this.isEnemy;
   }
 
-   fired() {
+  fired() {
     return this.fired;
   }
 
   // setters
-    toggleAlive() {
-    this.alive = !alive;
+  toggleAlive() {
+    this.alive = !this.alive;
   }
 
-toggleIsFired() {
+  toggleIsFired() {
     this.fired = !this.fired;
   }
 
-   setProjectileSize(weapon) {
+  setProjectileSize(weapon) {
     /* Sets size based on weapon type pased
      params: weapon (String): type of weapon
      */
@@ -90,30 +91,35 @@ toggleIsFired() {
     } else if (weapon === "BOLT" || weapon === "BOMB") {
       this.size = 15;
     } else {
-        this.size = 7;
+      this.size = 7;
     }
   }
 
-   setIsEnemy(weapon) {
+  setIsEnemy(weapon) {
     this.isEnemy = weapon === "FIRE" || weapon === "BOLT";
   }
 
   //methods
-    impactMade(xPos, yPos, s) {
+  impactMade(xPos, yPos, s) {
     /* checks if projectile is colliding with something
      params:
      xPos (float): x co-ordinate of item to check against
      yPos (float): y co-ordinate of item to check against
      s (int): the size of the item to check against
      */
-    this.distance = dist(this.xCord + this.size/2, this.yCord + this.size/2, xPos, yPos);
-    if (this.distance < s/2 + this.size) {
+    this.distance = dist(
+      this.xCord + this.size / 2,
+      this.yCord + this.size / 2,
+      xPos,
+      yPos
+    );
+    if (this.distance < s / 2 + this.size) {
       return true;
     }
     return false;
   }
 
-   isHitting(xPos, yPos, s) {
+  isHitting(xPos, yPos, s) {
     // checks if projectile is hitting an asset (from submarine)
     if (!this.isEnemy && this.fired && this.alive) {
       return this.impactMade(xPos, yPos, s);
@@ -121,7 +127,7 @@ toggleIsFired() {
     return this.false;
   }
 
-   isHittingPlayer(xPos, yPos, s) {
+  isHittingPlayer(xPos, yPos, s) {
     // checks if projectile is hitting the player (from enemy)
     if (this.isEnemy && this.fired && this.alive) {
       return this.impactMade(xPos, yPos, s);
@@ -129,9 +135,14 @@ toggleIsFired() {
     return false;
   }
 
-update() {
+  update() {
     // updates the projectile
-    if (this.xCord < 0 || this.xCord > width ||this.yCord < 0 || this.yCord > height) {
+    if (
+      this.xCord < 0 ||
+      this.xCord > width ||
+      this.yCord < 0 ||
+      this.yCord > height
+    ) {
       // kill projectile if off screen
       this.toggleAlive();
     } else {
@@ -141,7 +152,7 @@ update() {
     }
   }
 
-render() {
+  render() {
     // displays the projectile
     if (this.alive && this.fired) {
       // render enemy projectiles
@@ -154,10 +165,11 @@ render() {
         text("\uf06d", this.xCord, this.yCord);
       } else if (this.weaponType === "BOMB") {
         fill(253, 114, 114);
-        text("\uf1e2", this,xCord, this,yCord);
+        text("\uf1e2", this.xCord, this.yCord);
       } else {
         // render submarine projectile
         fill(255);
+
         ellipse(this.xCord, this.yCord, this.size, this.size);
       }
     }

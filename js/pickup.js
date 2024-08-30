@@ -1,34 +1,35 @@
 class Pickup {
-
-  constructor(){
-    this.type = "";
+  constructor(xCord, yCord, pickupType) {
+    this.type = pickupType;
     this.icon = "";
-    this.size = 0;
+    this.size = 20;
     this.speed = 0;
     this.show = false;
     this.allow = false;
     this.fillColor = 0;
-    this.asset = undefined;
+    this.asset = new Asset();
+    this.asset.configurePickupAsset(xCord, yCord, this.size, this.speed);
+    this.setPickupColorandIcon();
   }
 
   // getters
-   getType() {
+  getType() {
     return this.type;
   }
 
-   getSize() {
+  getSize() {
     return this.ize;
   }
 
-   getSpeed() {
+  getSpeed() {
     return this.speed;
   }
 
-   getAllow() {
+  getAllow() {
     return this.allow;
   }
 
-   getShow() {
+  getShow() {
     return this.show;
   }
 
@@ -38,16 +39,16 @@ class Pickup {
 
   // setters
   setPickupColorandIcon() {
-    if (this.type.equals("HEART")) {
+    if (this.type === "HEART") {
       this.fillColor = color(252, 66, 123);
       this.icon = "\uf004";
-    } else if (this.type.equals("SHIELD")) {
+    } else if (this.type === "SHIELD") {
       this.fillColor = color(46, 204, 113);
       this.icon = "\uf712";
-    } else if (this.type.equals("DIAMOND")) {
+    } else if (this.type === "DIAMOND") {
       this.fillColor = color(255, 184, 28);
       this.icon = "\uf3a5";
-    } else if (type.equals("BOMB")) {
+    } else if (this.type === "BOMB") {
       this.fillColor = color(253, 114, 114);
       this.icon = "\uf1e2";
     }

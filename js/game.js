@@ -53,6 +53,7 @@ class Game {
   }
 
   initializeAssets() {
+    console.log("initing assets....");
     this.scoreboard = new Scoreboard();
     if (this.lives < 3) {
       this.submarine = new Submarine();
@@ -70,12 +71,14 @@ class Game {
     this.projectiles = Array.from({ length: 150 }, () => new Projectile());
 
     // create enemies
-    for (let i = 0; i < this.enemies.length; i++) {
+    for (let i = 0; i < this.numberOfEnemies; i++) {
       this.enemies[i] = new Enemy(
         this.enemiesToInclude[floor(random(0, this.enemiesToInclude.length))]
       );
       this.enemies[i].getAsset().setSpawnLocationForSubmarine(this.submarine);
     }
+
+    console.log(this.boulders, this.pickups, this.enemies);
 
     this.setRunGame(true);
   }
@@ -206,7 +209,7 @@ class Game {
           this.pickups[j] = new Pickup(
             this.boulders[j].getAsset().getXCord(),
             this.boulders[j].getAsset().getYCord(),
-            this.pickupsToInclude[floor(random(0, pickupsToInclude.length))]
+            this.pickupsToInclude[floor(random(0, this.pickupsToInclude.length))]
           );
 
           //calculate drop rate for pickup and dsiplay it
@@ -226,7 +229,7 @@ class Game {
 
       for (let k = 0; k < this.enemies.length; k++) {
         //check if hitting an enemy
-        hitEnemy = this.projectiles[i].isHitting(
+        let hitEnemy = this.projectiles[i].isHitting(
           this.enemies[k].getAsset().getXCord(),
           this.enemies[k].getAsset().getYCord(),
           this.enemies[k].getAsset().getSize()
@@ -283,16 +286,16 @@ class Game {
       // check if pickup is able to be interacted with
       if (this.pickups[i].getAllow() && this.pickups[i].getShow()) {
         if (this.pickups[i].getAsset().isColliding(this.submarine)) {
-          if (this.pickups[i].getType().equals("HEART")) {
+          if (this.pickups[i].getType() === "HEART") {
             // add a life
             this.submarine.updateLives(1);
-          } else if (this.pickups[i].getType().equals("SHIELD")) {
+          } else if (this.pickups[i].getType() === "SHIELD") {
             // add a shield
             this.submarine.setHasShield(true);
-          } else if (this.pickups[i].getType().equals("DIAMOND")) {
+          } else if (this.pickups[i].getType() === "DIAMOND") {
             // increase the score
             this.player.increaseCurrentScore(100);
-          } else if (this.pickups[i].getType().equals("BOMB")) {
+          } else if (this.pickups[i].getType() === "BOMB") {
             // add a bomb
             this.submarine.setHasBomb(true);
           }
@@ -355,7 +358,7 @@ class Game {
       // add leviathan enemy if score reaches 1000 and is difficulty other than novice
       if (
         this.player.getCurrentScore() >= 1000 &&
-        !this.difficulty.equals("NOVICE") &&
+        !this.difficulty === "NOVICE" &&
         !this.bossAdded &&
         !this.bossDefeated
       ) {

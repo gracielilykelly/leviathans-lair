@@ -1,22 +1,26 @@
 class Boulder {
-
-  constructor(){
-    this.size = Math.random(10, 35);
-    this.angle = Math.random(0, TWO_PI);
-    this.travelSpeed = Math.random(.1, .7);
-    this.asset = new Asset(this.size, this.angle, this.travelSpeed);
+  constructor() {
+    this.size = Math.floor(Math.random() * 100);
+    this.angle = Math.floor(Math.random() * TWO_PI);
+    this.travelSpeed = Math.random() * 0.7 + 0.1;
+    this.asset = new Asset();
+    this.asset.configureEnemyBoulderAsset(
+      this.size,
+      this.angle,
+      this.travelSpeed
+    );
   }
 
   // getters
-   getSize() {
+  getSize() {
     return this.size;
   }
 
-   getTravelSpeed() {
+  getTravelSpeed() {
     return this.travelSpeed;
   }
 
-   getAngle() {
+  getAngle() {
     return this.angle;
   }
 
@@ -25,20 +29,20 @@ class Boulder {
   }
 
   // setters
-  setSize( s) {
+  setSize(s) {
     this.size = s;
   }
 
-   setTravelSpeed( speed) {
+  setTravelSpeed(speed) {
     this.travelSpeed = speed;
   }
 
-   setAngle( a) {
+  setAngle(a) {
     this.angle = a;
   }
 
   // methods
-   render() {
+  render() {
     // displays the boulder
     stroke(87, 96, 111);
     strokeWeight(4);
