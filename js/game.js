@@ -74,7 +74,7 @@ class Game {
       this.enemies[i] = new Enemy(
         this.enemiesToInclude[floor(random(0, this.enemiesToInclude.length))]
       );
-      this.enemies[i].getAsset().setSpawnLocation(this.submarine);
+      this.enemies[i].getAsset().setSpawnLocationForSubmarine(this.submarine);
     }
 
     this.setRunGame(true);
@@ -172,7 +172,9 @@ class Game {
         floor(random(this.boulderMinSize, this.boulderMaxSize))
       );
     }
-    this.boulders[index].getAsset().setSpawnLocation(this.submarine);
+    this.boulders[index]
+      .getAsset()
+      .setSpawnLocationForSubmarine(this.submarine);
   }
 
   handleProjectiles() {
@@ -222,7 +224,7 @@ class Game {
         }
       }
 
-      for (k = 0; k < this.enemies.length; k++) {
+      for (let k = 0; k < this.enemies.length; k++) {
         //check if hitting an enemy
         hitEnemy = this.projectiles[i].isHitting(
           this.enemies[k].getAsset().getXCord(),
@@ -252,7 +254,9 @@ class Game {
                   floor(random(0, this.enemiesToInclude.length))
                 ]
               );
-              this.enemies[k].getAsset().setSpawnLocation(this.submarine);
+              this.enemies[k]
+                .getAsset()
+                .setSpawnLocationForSubmarine(this.submarine);
             }
           }
           this.projectiles[i] = new Projectile();
@@ -313,7 +317,7 @@ class Game {
   }
 
   handleBoulders() {
-    b = 0;
+    let b = 0;
     while (b < this.boulders.length) {
       // check if boulder is hitting submarine
       if (this.boulders[b].getAsset().isColliding(this.submarine)) {
@@ -327,7 +331,7 @@ class Game {
   }
 
   handleEnemies() {
-    for (j = 0; j < this.enemies.length; j++) {
+    for (let j = 0; j < this.enemies.length; j++) {
       let enemy = this.enemies[j];
 
       // check if enemy is hitting submarine
