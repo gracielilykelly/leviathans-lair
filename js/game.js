@@ -50,7 +50,7 @@ class Game {
       this.setNumberOfBoulders(10);
       this.setNumberOfEnemies(10);
       this.setEnemiesToInclude(ENEMY_CHOICES);
-      this.setPickupsToInclude(subset(PICKUP_CHOICES, 0, 3));
+      this.setPickupsToInclude(PICKUP_CHOICES);
       this.setPickupDropPercentage(50);
     } else if (difficultyLevel === "EXPERT") {
       this.setNumberOfBoulders(15);
