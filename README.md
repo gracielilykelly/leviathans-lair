@@ -1,37 +1,32 @@
-# Leviathan's Lair
+# 🐲🔥🚀 Leviathan's Lair
 
-## About
-Leviathan's Lair is a game where you play as a submarine and you battle against deep sea creatures and monters, ultimately fighting the leviathan.
-You can shoot at boulders to receive pickups such as shield and hearts.
- 
- The user can interact with the game by doing the following:
- - Arrow keys (left/right) - rotate the submarine
- - Arrow keys (up/down) - move the submarine
- - [Spacebar] - Shoot Projectile
- - [B] - Shoot Bombs
- - [S] - Activate Shield
- - [P] - Pause Game
- - [I] - See Game Controls
- 
+<div align="center">
+<a href="https://leviathans-lair.vercel.app/" target="_blank"><img width="800" alt="Screenshot 2024-08-31 at 18 07 02" src="https://github.com/user-attachments/assets/45c72558-4df8-4507-b8e5-cbb4b020c266">
+</a>
+</div>
 
- ### Game Inspiration
- Below are a list of games that I took inspiration from:
- 
- #### Asteroids
- The mechanics of the game are very similar but I have customised it by
- allowing the submarine to move freely, adding pickups, including enemy types 
- and a boss battle
- 
- #### Super Mario Bros
- I took inspiration for the pickups from the mechanic of hitting blocks in Super Mario
- 
- #### Crash Bandicoot
- The enemy types were inspired by the underwater levels in Crash Bandicoot
- 
- #### Subnautica
- The theme of the game was inspired by Subnautica. Also the jellyfish 
- shooting electricity was inspired by the [Crabsquid](https://subnautica.fandom.com/wiki/Crabsquid) in the 
- game.
 
- ## Play the Game
- You can play the game [here](https://leviathans-lair.vercel.app/)
+## Description
+Leviathan's Lair is an underwater asteroids like game where you pilot a submarine and face off against deep-sea creatures, including a showdown with the legendary Leviathan. Navigate your way through treacherous waters, shooting at boulders to gain valuable pickups like shields, bombs and hearts, and strive to survive while aiming to get a high score.
+
+## Game Controls
+- Arrow Keys (Left/Right): Rotate the submarine
+- Arrow Keys (Up/Down): Move the submarine
+- [Spacebar]: Shoot Projectile
+- [B]: Shoot Bombs
+- [S]: Activate Shield
+- [P]: Pause Game
+- [I]: View Game Controls
+
+## Game Inspiration
+Leviathan's Lair draws inspiration from the following games:
+
+- Asteroids: The game mechanics are similar, but with enhanced features like free movement for the submarine, pickups, and various enemy types.
+- Super Mario Bros: The idea for pickups comes from the mechanic of hitting blocks to reveal items.
+- Crash Bandicoot: The variety of enemy types is inspired by the underwater levels in Crash Bandicoot.
+- Subnautica: The game's theme and the concept of jellyfish shooting electricity were inspired by Subnautica and its Crabsquid creature.
+
+## Play the Game
+Play the game <a href="https://leviathans-lair.vercel.app/" target="_blank">here</a>.
+
+**Note**: Leviathan's Lair is designed to be played on desktop only, as it utilizes keyboard controls. 
