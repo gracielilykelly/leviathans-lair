@@ -241,8 +241,6 @@ class Game {
             this.player.increaseCurrentScore(this.enemies[k].getScoreAmount());
             if (this.enemies[k].getType() == "LEVIATHAN") {
               // remove leviathan from list of enemies
-              let copyEnemies = new Enemy[this.enemies.length - 1]();
-              arrayCopy(this.enemies, 1, copyEnemies, 0, copyEnemies.length);
               let levIndx = this.enemies.indexOf(
                 (enemy) => enemy.getType() == "LEVIATHAN"
               );
@@ -357,13 +355,13 @@ class Game {
       // add leviathan enemy if score reaches 1000 and is difficulty other than novice
       if (
         this.player.getCurrentScore() >= 1000 &&
-        !this.difficulty === "NOVICE" &&
+        this.difficulty !== "NOVICE" &&
         !this.bossAdded &&
         !this.bossDefeated
       ) {
         // add leviathan to enemies and render it below other enemies
-        this.enemies.append(new Enemy("LEVIATHAN"));
-        this.enemies[-1].setSpawnLocation();
+        this.enemies.push(new Enemy("LEVIATHAN"));
+        this.enemies[this.enemies.length - 1].setSpawnLocation();
         this.setBossAdded(true);
       }
 
