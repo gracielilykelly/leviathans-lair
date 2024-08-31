@@ -395,3 +395,208 @@ class Game {
     this.initializeAssets();
   }
 }
+
+
+// Scoreboard
+class Scoreboard {
+  constructor() {
+    this.heightDim = height / 15;
+    this.widthDim = width;
+  }
+
+  // getters
+  getHeightDim() {
+    return this.heightDim;
+  }
+
+  getWidthDim() {
+    return this.widthDim;
+  }
+
+  // setters
+  setHeightDim(h) {
+    this.heightDim = h;
+  }
+
+  setWidthDim(w) {
+    this.widthDim = w;
+  }
+
+  // methods
+  render(player, submarine) {
+    /* Displays the scoreboard on the screen
+     params:
+     player (Player) - the player whose info you wish to display
+     submarine (Submarine) - the submarine of which info you wish to show
+     */
+    fill(79, 79, 178);
+    noStroke();
+    rect(0, 0, this.widthDim, this.heightDim);
+    textFont(wordFont, 30);
+    fill(255, 184, 28);
+
+    // display game count
+    const currentGame = player.getGameAttempts() + 1;
+    textAlign(LEFT, CENTER);
+    text("Game " + currentGame + "/" + player.getNumberOfGames(), 30, 25);
+
+    // display current score
+    textAlign(CENTER, CENTER);
+    text(
+      player.getPlayerName() + ":" + player.getCurrentScore(),
+      width / 2,
+      25
+    );
+
+    // display hearts
+    let i = 0;
+    do {
+      textFont(iconFont, 15);
+      fill(252, 66, 123);
+      text("\uf004", this.widthDim - (80 - i * 20), this.heightDim / 2);
+      i++;
+    } while (i < submarine.getLives());
+
+    textFont(iconFont, 20);
+    // display shield
+    if (submarine.getHasShield() && !submarine.getShieldActive()) {
+      fill(46, 204, 113);
+    } else {
+      // grey out the shield
+      fill(189, 195, 199);
+    }
+    text("\uf712", width - 105, this.heightDim / 2);
+
+    // display bomb
+    if (submarine.getHasBomb()) {
+      fill(253, 114, 114);
+    } else {
+      fill(189, 195, 199);
+    }
+    text("\uf1e2", width - 130, this.heightDim / 2);
+
+    // display instructions
+    fill(189, 195, 199);
+    textFont(wordFont, 10);
+    textAlign(LEFT, CENTER);
+    text("Press [i] for controls ", width - 360, 30);
+  }
+}
+
+// Player
+class Player {
+  constructor(playerName) {
+    this.currentScore = 0;
+    this.scores = [];
+    this.highScore = 0;
+    this.gameAttempts = 0;
+    this.numberOfGames = 3;
+    this.name = this._setPlayerName(playerName);
+  }
+
+  _setPlayerName(playerName) {
+    // Clean the username and set it
+    if (playerName.length <= 0) {
+      // set default name
+      playerName = "Bob";
+    }
+    if (playerName.length > 10) {
+      return playerName.substring(0, 10);
+    } else {
+      return playerName.toUpperCase();
+    }
+  }
+
+  // getters
+  getScoresList() {
+    return this.scores;
+  }
+
+  getGameAttempts() {
+    return this.gameAttempts;
+  }
+
+  getHighScore() {
+    return this.highScore;
+  }
+
+  getCurrentScore() {
+    return this.currentScore;
+  }
+
+  getPlayerName() {
+    return this.name;
+  }
+
+  getNumberOfGames() {
+    return this.numberOfGames;
+  }
+
+  // setters
+  setPlayerName(playerName) {
+    // Clean the username and set it
+    if (playerName.length() > 10) {
+      this.name = playerName.substring(0, 10);
+    } else {
+      this.name = playerName.toUpperCase();
+    }
+  }
+  setHighScore() {
+    let scoretoSet = 0;
+    for (let i = 0; i < this.scores.length; i++) {
+      if (this.scores[i] > this.highScore) {
+        this.highScore = this.scores[i];
+      }
+    }
+    this.highScore = scoretoSet;
+  }
+
+  increaseGameAttempts() {
+    this.gameAttempts++;
+  }
+
+  resetCurrentScore() {
+    this.currentScore = 0;
+  }
+
+  increaseCurrentScore(score) {
+    this.currentScore += score;
+  }
+
+  addScoretoList(score) {
+    const index = this.gameAttempts - 1;
+    this.scores[index] = score;
+  }
+
+  highestScore() {
+    // return the highest score in the scores array
+    let highestScore = this.scores[0];
+    for (let i = 1; i < this.gameAttempts; i++) {
+      if (this.scores[i] > highestScore) {
+        highestScore = this.scores[i];
+      }
+    }
+    return highestScore;
+  }
+
+  lowestScore() {
+    // return the lowest score in the scores array
+    let lowestScore = this.scores[0];
+    for (let i = 1; i < this.gameAttempts; i++) {
+      if (this.scores[i] < lowestScore) {
+        lowestScore = this.scores[i];
+      }
+    }
+    return lowestScore;
+  }
+
+  averageScore() {
+    // calculates and returns the average of all scores stored in array
+    let total = 0;
+    for (let i = 0; i < this.gameAttempts; i++) {
+      total = total + this.scores[i];
+    }
+    return Math.floor(total / this.gameAttempts);
+  }
+}
+

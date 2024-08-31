@@ -43,13 +43,8 @@ function endGamesRun() {
   game.getPlayer().setHighScore();
   // display info to player
   const startOver = confirm(
-    game.getPlayer().getPlayerName() +
-      ", you've played all of your games! \n\n" +
-      "Games Played: " +
+    "Total Games Played: " +
       game.getPlayer().getGameAttempts() +
-      "\n\n" +
-      "Difficulty Level: " +
-      game.getDifficulty() +
       "\n\n" +
       "Highest Score: " +
       game.getPlayer().highestScore() +
@@ -59,8 +54,7 @@ function endGamesRun() {
       "\n" +
       "Average Score: " +
       game.getPlayer().averageScore() +
-      "\n\n" +
-      "Start Over?"
+      "\n\nStart Over?"
   );
 
   // restart the game if they want to play again
@@ -68,7 +62,7 @@ function endGamesRun() {
     createGame();
   } else {
     remove();
-    document.getElementById("thanks").style.display = "block";
+    document.getElementById("thanks").style.display = "flex";
   }
 }
 
@@ -83,9 +77,9 @@ function gameOver() {
   ) {
     // check if player wants to play again
     const playAgain = confirm(
-      "Game Over! You scored " +
+      "Game Over!\n\nYou scored " +
         game.getPlayer().getCurrentScore() +
-        ".\nContinue?"
+        ".\n\nKeep Playing?"
     );
 
     if (playAgain) {
@@ -170,7 +164,6 @@ function keyPressed() {
         "[B] = Shoot Bombs\n" +
         "[S] = Activate Shield\n" +
         "[P] = Pause Game\n" +
-        "[E] = Exit Game\n" +
         "[I] = See Controls"
     );
   }

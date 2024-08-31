@@ -1,0 +1,77 @@
+        @font-face {
+            font-family: "Joystix";
+            src:
+                local("Joystix"),
+                url("fonts/joystix-monospace.otf") format("opentype"),
+
+        }
+
+        html,
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden;
+            background: rgb(24, 44, 97);
+            font-family: "Joystix";
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgb(255, 184, 28);
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            display: flex;
+            width: 65%;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .github-link, .play-again-button {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .github-link:hover {
+            background-color: #24292e;
+        }
+
+        .play-again-button {
+            background-color: rgb(255, 184, 28);
+            font-family: "Joystix";
+        }
+
+        .play-again-button:hover {
+            background-color: rgb(214, 147, 2);
+            ;
+        }
