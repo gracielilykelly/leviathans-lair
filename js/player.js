@@ -1,7 +1,7 @@
 class Player {
   constructor(playerName) {
     this.currentScore = 0;
-    this.scores = []
+    this.scores = [];
     this.highScore = 0;
     this.gameAttempts = 0;
     this.numberOfGames = 0;
@@ -53,7 +53,7 @@ class Player {
   }
   setHighScore() {
     let scoretoSet = 0;
-    for (let i=0; i < scores.length; i++) {
+    for (let i = 0; i < this.scores.length; i++) {
       if (this.scores[i] > this.highScore) {
         this.highScore = this.scores[i];
       }
@@ -62,7 +62,7 @@ class Player {
   }
 
   increaseGameAttempts() {
-    this.gameAttempts ++;
+    this.gameAttempts++;
   }
 
   resetCurrentScore() {
@@ -78,8 +78,6 @@ class Player {
     this.scores[index] = score;
   }
 
-
-
   highestScore() {
     // return the highest score in the scores array
     let highestScore = this.scores[0];
@@ -87,7 +85,7 @@ class Player {
       if (this.scores[i] > highestScore) {
         highestScore = this.scores[i];
       }
-    }   
+    }
     return highestScore;
   }
 
@@ -98,7 +96,7 @@ class Player {
       if (this.scores[i] < lowestScore) {
         lowestScore = this.scores[i];
       }
-    }   
+    }
     return lowestScore;
   }
 
@@ -106,8 +104,8 @@ class Player {
     // calculates and returns the average of all scores stored in array
     let total = 0;
     for (let i = 0; i < this.gameAttempts; i++) {
-      total = total +  this.scores[i];
-    }   
+      total = total + this.scores[i];
+    }
     return total / this.gameAttempts;
   }
 }

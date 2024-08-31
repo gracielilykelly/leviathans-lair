@@ -25,6 +25,69 @@ window.onresize = function () {
   canvas.size(window.innerWidth, window.innerHeight);
 };
 
+function endGamesRun() {
+  // set the highest score
+  game.getPlayer().setHighScore();
+  // display info to player
+  alert(
+    game.getPlayer().getPlayerName() +
+      ", you've played all of your games! \n\n" +
+      "Games Played: " +
+      game.getPlayer().getGameAttempts() +
+      "\n\n" +
+      "Difficulty Level: " +
+      game.getDifficulty() +
+      "\n\n" +
+      "Highest Score: " +
+      game.getPlayer().highestScore() +
+      "\n" +
+      "Lowest Score:  " +
+      game.getPlayer().lowestScore() +
+      "\n" +
+      "Average Score: " +
+      game.getPlayer().averageScore() +
+      "\n\n" +
+      "Thanks for playing!"
+  );
+
+  // restart the game if they want to play again
+  if (prompt("Start Over?") == "Y") {
+    createGame();
+  } else {
+    exit();
+  }
+}
+
+function gameOver() {
+  // Ends the game and shows info to the player
+
+  // add score to player's scores
+  game.getPlayer().addScoretoList(game.getPlayer().getCurrentScore());
+
+  // if the player still has games left to play ask if they want to continue to next game
+  if (
+    game.getPlayer().getGameAttempts() < game.getPlayer().getNumberOfGames()
+  ) {
+    // check if player wants to play again
+    const playAgain = prompt(
+      "Game Over! You scored " +
+        game.getPlayer().getCurrentScore() +
+        ".\nWould you like to play your next game?"
+    );
+
+    if (playAgain == "Y") {
+      // reset the game to be played again
+      game.reset();
+    } else {
+      // end the games
+      endGamesRun();
+    }
+  } else {
+    // the player has no more games left in the tournament
+    endGamesRun();
+  }
+}
+
 // handle key events
 function keyPressed() {
   if (keyCode == UP_ARROW) {
@@ -86,7 +149,7 @@ function keyPressed() {
     }
   } else if (key == "i" || key == "I") {
     // display game controls
-    displayMessageBox(
+    alert(
       "Controls: \n" +
         "\u2191 \u2193 = Move Submarine\n" +
         "\u2192 \u2190 = Rotate Submarine\n" +
