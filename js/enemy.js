@@ -91,7 +91,6 @@ class Enemy {
       this.setProjectileCount(6);
     }
     this.asset = new Asset(this.size, this.angle, this.travelSpeed);
-    console.log(this.size, this.angle, this.travelSpeed);
     this.asset.configureEnemyBoulderAsset(
       this.size,
       this.angle,

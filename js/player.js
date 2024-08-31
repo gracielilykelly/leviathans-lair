@@ -65,10 +65,6 @@ class Player {
     this.gameAttempts ++;
   }
 
-  increaseCurrentScore() {
-    this.currentScore += 5;
-  }
-
   resetCurrentScore() {
     this.currentScore = 0;
   }

@@ -53,7 +53,6 @@ class Game {
   }
 
   initializeAssets() {
-    console.log("initing assets....");
     this.scoreboard = new Scoreboard();
     if (this.lives < 3) {
       this.submarine = new Submarine();
@@ -77,8 +76,6 @@ class Game {
       );
       this.enemies[i].getAsset().setSpawnLocationForSubmarine(this.submarine);
     }
-
-    console.log(this.boulders, this.pickups, this.enemies);
 
     this.setRunGame(true);
   }
@@ -203,13 +200,15 @@ class Game {
 
         if (hitBoulder) {
           // increase the player's score
-          this.player.increaseCurrentScore();
+          this.player.increaseCurrentScore(5);
 
           // add a pickup for the hit boulder
           this.pickups[j] = new Pickup(
             this.boulders[j].getAsset().getXCord(),
             this.boulders[j].getAsset().getYCord(),
-            this.pickupsToInclude[floor(random(0, this.pickupsToInclude.length))]
+            this.pickupsToInclude[
+              floor(random(0, this.pickupsToInclude.length))
+            ]
           );
 
           //calculate drop rate for pickup and dsiplay it
@@ -288,7 +287,7 @@ class Game {
         if (this.pickups[i].getAsset().isColliding(this.submarine)) {
           if (this.pickups[i].getType() === "HEART") {
             // add a life
-            this.submarine.updateLives(1);
+            this.submarine.addLives(1);
           } else if (this.pickups[i].getType() === "SHIELD") {
             // add a shield
             this.submarine.setHasShield(true);

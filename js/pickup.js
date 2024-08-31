@@ -3,7 +3,7 @@ class Pickup {
     this.type = pickupType;
     this.icon = "";
     this.size = 20;
-    this.speed = 0;
+    this.speed = 3;
     this.show = false;
     this.allow = false;
     this.fillColor = 0;

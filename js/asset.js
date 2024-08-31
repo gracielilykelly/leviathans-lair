@@ -204,16 +204,12 @@ class Asset {
     } else if (!keepWithinBoundary) {
       // let it back to game boundary on opposite side
       if (this.xCord < -this.size / 2) {
-        console.log(1);
         this.setXCord(width + this.size / 2);
       } else if (this.xCord > width + this.size / 2) {
-        console.log(2);
         this.setXCord(-this.size / 2);
       } else if (this.yCord < -this.size / 2) {
-        console.log(3);
         this.setYCord(height + this.size / 2);
       } else if (this.yCord > height + this.size / 2) {
-        console.log(4);
         this.setYCord(0);
       }
     }

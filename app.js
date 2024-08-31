@@ -12,14 +12,18 @@ function preload() {
 }
 
 function createGame() {
-  game = new Game("EXPERT", "Grace");
+  game = new Game("NOVICE", "Grace");
 }
 
 function setup() {
-  createCanvas(800, 600);
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
   textFont(wordFont);
   createGame();
 }
+
+window.onresize = function () {
+  canvas.size(window.innerWidth, window.innerHeight);
+};
 
 // handle key events
 function keyPressed() {
@@ -56,7 +60,7 @@ function keyPressed() {
       game
         .getSubmarine()
         .getBombShooter()
-        .shoot(
+        .shootMultiple(
           game.getProjectiles(),
           game.getAvailableProjectileIndexes(14),
           game.getSubmarine().getXCord(),

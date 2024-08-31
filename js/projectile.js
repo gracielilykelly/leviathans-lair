@@ -19,7 +19,6 @@ class Projectile {
 
   // submarine bullet
   asSubmarineBullet(x, y, dir) {
-    console.log("SETTING AS SUB BULLET...");
     this.xCord = x;
     this.yCord = y;
     this.direction = dir;
@@ -32,16 +31,16 @@ class Projectile {
   }
 
   // enemy and bomb projectile
-  Projectile(x, y, dir, weapon) {
-    xCord = x;
-    yCord = y;
-    direction = dir;
-    travelSpeed = 3;
-    fired = false;
-    alive = true;
-    weaponType = weapon;
-    setIsEnemy(weapon);
-    setProjectileSize(weapon);
+  asEnemyAndBombProjectile(x, y, dir, weapon) {
+    this.xCord = x;
+    this.yCord = y;
+    this.direction = dir;
+    this.travelSpeed = 3;
+    this.fired = false;
+    this.alive = true;
+    this.weaponType = weapon;
+    this.setIsEnemy(weapon);
+    this.setProjectileSize(weapon);
   }
 
   // getters
