@@ -5,16 +5,22 @@ let movingRight = true;
 let iconFont;
 let wordFont;
 let game;
+let playerName;
+let difficultyLevel;
 
 function preload() {
   iconFont = loadFont("fonts/fa-solid.ttf");
   wordFont = loadFont("fonts/joystix-monospace.otf");
+  alert("WELCOME TO LEVIATHAN'S LAIR");
+     playerName = prompt("Please enter your name (max 10 chars)");
+     difficultyLevel = prompt(
+      "Enter difficulty level (NOVICE, NORMAL, EXPERT)"
+    );
 }
 
 function createGame() {
-  alert("WELCOME TO LEVIATHAN'S LAIR");
-  let name = prompt("What's your name?");
-  game = new Game("EXPERT", name);
+
+  game = new Game(difficultyLevel, name);
 }
 
 function setup() {
@@ -56,13 +62,12 @@ function endGamesRun() {
   if (prompt("Start Over?") == "Y") {
     createGame();
   } else {
-    exit();
+    alert("goodbye!");
   }
 }
 
 function gameOver() {
   // Ends the game and shows info to the player
-
   // add score to player's scores
   game.getPlayer().addScoretoList(game.getPlayer().getCurrentScore());
 

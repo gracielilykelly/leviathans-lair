@@ -110,6 +110,6 @@ class Player {
     for (let i = 0; i < this.gameAttempts; i++) {
       total = total + this.scores[i];
     }
-    return total / this.gameAttempts;
+    return Math.floor(total / this.gameAttempts);
   }
 }
