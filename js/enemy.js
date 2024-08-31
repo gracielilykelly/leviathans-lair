@@ -71,6 +71,7 @@ class Enemy {
       this.setFillColor(color(248, 239, 186));
       this.setIcon("\uf5a4");
       this.setScoreAmount(30);
+      this.setSize(50);
     } else if (enemyType === "PIRANHA") {
       this.setLives(1);
       this.setSize(25);
@@ -269,7 +270,7 @@ class Enemy {
 
     // set to angry mode
     if (this.allowedAction) {
-      this.size = 75;
+      this.size = 100;
       this.fillColor = color(253, 114, 114);
       this.icon = "\uf556";
       timer = this.actionTimer / 2;

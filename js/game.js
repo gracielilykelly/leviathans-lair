@@ -40,19 +40,19 @@ class Game {
     // depending on the difficulty set certain attributes
     if (difficultyLevel === "NOVICE") {
       this.setNumberOfBoulders(5);
-      this.setNumberOfEnemies(2);
+      this.setNumberOfEnemies(3);
       this.setEnemiesToInclude(subset(ENEMY_CHOICES, 2, 1));
       this.setPickupsToInclude(PICKUP_CHOICES);
       this.setPickupDropPercentage(100);
     } else if (difficultyLevel === "NORMAL") {
       this.setNumberOfBoulders(10);
-      this.setNumberOfEnemies(5);
-      this.setEnemiesToInclude(subset(ENEMY_CHOICES, 1));
+      this.setNumberOfEnemies(10);
+      this.setEnemiesToInclude(ENEMY_CHOICES);
       this.setPickupsToInclude(subset(PICKUP_CHOICES, 0, 3));
       this.setPickupDropPercentage(50);
     } else if (difficultyLevel === "EXPERT") {
       this.setNumberOfBoulders(15);
-      this.setNumberOfEnemies(10);
+      this.setNumberOfEnemies(25);
       this.setEnemiesToInclude(ENEMY_CHOICES);
       this.setPickupsToInclude(subset(PICKUP_CHOICES, 2, 1));
       this.setPickupDropPercentage(10);
