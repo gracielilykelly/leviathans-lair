@@ -11,12 +11,6 @@ class Projectile {
     this.weaponType = "";
   }
 
-  // initial projectile
-  Projectile() {
-    alive = true;
-    isEnemy = false;
-  }
-
   // submarine bullet
   asSubmarineBullet(x, y, dir) {
     this.xCord = x;
@@ -26,7 +20,7 @@ class Projectile {
     this.fired = false;
     this.weaponType = "";
     this.travelSpeed = 3;
-    this.setIsEnemy(false);
+    this.setIsEnemy("BULLET");
     this.setProjectileSize();
   }
 

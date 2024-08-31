@@ -29,7 +29,6 @@ class Shooter {
       projectiles[index] = new Projectile();
       projectiles[index].asSubmarineBullet(xCord, yCord, angle);
       projectiles[index].toggleIsFired();
-      projectiles[index].setIsEnemy(false);
     }
   }
 
@@ -59,7 +58,6 @@ class Shooter {
           this.weaponType
         );
         projectiles[indexes[i]].toggleIsFired();
-        projectiles[indexes[i]].setIsEnemy(isEnemy);
       }
     }
   }
