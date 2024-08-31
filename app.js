@@ -8,7 +8,7 @@ let game;
 
 function preload() {
   iconFont = loadFont("fonts/fa-solid.ttf");
-  wordFont = loadFont("fonts/arcade-classic.ttf");
+  wordFont = loadFont("fonts/joystix-monospace.otf");
 }
 
 function createGame() {

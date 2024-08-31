@@ -33,7 +33,7 @@ class Scoreboard {
     fill(79, 79, 178);
     noStroke();
     rect(0, 0, this.widthDim, this.heightDim);
-    textFont(textFont, 30);
+    textFont(wordFont, 30);
     fill(255, 184, 28);
 
     // display game count
