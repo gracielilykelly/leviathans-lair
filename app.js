@@ -12,7 +12,9 @@ function preload() {
 }
 
 function createGame() {
-  game = new Game("EXPERT", "Grace");
+  alert("WELCOME TO LEVIATHAN'S LAIR");
+  let name = prompt("What's your name?");
+  game = new Game("EXPERT", name);
 }
 
 function setup() {

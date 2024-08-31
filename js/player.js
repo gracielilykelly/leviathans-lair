@@ -4,12 +4,16 @@ class Player {
     this.scores = [];
     this.highScore = 0;
     this.gameAttempts = 0;
-    this.numberOfGames = 0;
+    this.numberOfGames = 3;
     this.name = this._setPlayerName(playerName);
   }
 
   _setPlayerName(playerName) {
     // Clean the username and set it
+    if (playerName.length <= 0) {
+      // set default name
+      playerName = "Bob";
+    }
     if (playerName.length > 10) {
       return playerName.substring(0, 10);
     } else {
