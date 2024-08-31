@@ -347,7 +347,7 @@ class Game {
             .getShooter()
             .shootMultiple(
               this.projectiles,
-              getAvailableProjectileIndexes(enemy.getProjectileCount()),
+              this.getAvailableProjectileIndexes(enemy.getProjectileCount()),
               enemy.getAsset().getXCord(),
               enemy.getAsset().getYCord()
             );

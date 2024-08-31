@@ -12,7 +12,7 @@ class Enemy {
     this.travellingLeft;
     this.allowedAction;
     this.canHaveWeapons;
-    this.actionTimer;
+    this.actionTimer = Math.floor(Math.random() * 3500 + 250);
     this.fillColor;
     this.configureEnemy(enemyType);
   }
@@ -129,11 +129,7 @@ class Enemy {
   }
 
   getActionCanBeTaken() {
-    return frameCount % actionTimer == 0;
-  }
-
-  getActionCanBeTaken(timer) {
-    return frameCount % timer == 0;
+    return frameCount % this.actionTimer == 0;
   }
 
   getActionTimer() {
@@ -249,7 +245,7 @@ class Enemy {
   updateShark(submarine) {
     // only allowed to attack if not colliding with submarine
     if (this.asset.isColliding(submarine)) {
-      this.sallowedAction = false;
+      this.allowedAction = false;
     }
 
     // allow shark to make attack
@@ -282,7 +278,7 @@ class Enemy {
     }
 
     // allow pufferfish to get bigger/smaller
-    if (this.getActionCanBeTaken(timer)) {
+    if (this.getActionCanBeTaken()) {
       this.allowedAction = !this.allowedAction;
     }
 
@@ -292,7 +288,7 @@ class Enemy {
   updatePiranha() {
     // change direction of piranha
     if (this.getActionCanBeTaken()) {
-      travellingUp = !travellingUp;
+      this.travellingUp = !this.travellingUp;
     }
     this.asset.setVerticalDirection(this.travellingUp);
     this.asset.move(false);

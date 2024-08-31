@@ -12,7 +12,7 @@ function preload() {
 }
 
 function createGame() {
-  game = new Game("NOVICE", "Grace");
+  game = new Game("EXPERT", "Grace");
 }
 
 function setup() {

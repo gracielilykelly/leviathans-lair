@@ -161,7 +161,6 @@ class Submarine {
   addLives(addAmount) {
     // only allow lives up to maximum
     if (this.lives < this.maxLives) {
-      console.log("ADDING LIVES")
       this.lives += addAmount;
     }
   }
