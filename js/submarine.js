@@ -7,7 +7,7 @@ class Submarine {
     this.rotationSpeed = QUARTER_PI;
     this.travelSpeed = 0; // TODO: set travel speed
     this.lives = 3;
-    this.maxLive = 3;
+    this.maxLives = 3;
     this.size = 30;
     this.invincibilityTimer = 0;
     this.subColor = (64, 224, 208);
@@ -161,6 +161,7 @@ class Submarine {
   addLives(addAmount) {
     // only allow lives up to maximum
     if (this.lives < this.maxLives) {
+      console.log("ADDING LIVES")
       this.lives += addAmount;
     }
   }
