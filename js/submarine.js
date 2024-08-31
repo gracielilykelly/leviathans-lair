@@ -222,11 +222,11 @@ class Submarine {
     noFill();
 
     if (this.shieldActive) {
-      this.setColor((46, 204, 113));
+      this.setColor(color(46, 204, 113));
     } else if (this.invincible) {
-      this.setColor((231, 76, 60));
+      this.setColor(color(231, 76, 60));
     } else {
-      this.setColor((64, 224, 208));
+      this.setColor(color(64, 224, 208));
     }
 
     // rotate the rocket icon
