@@ -11,33 +11,38 @@ let difficultyLevel;
 function preload() {
   iconFont = loadFont("fonts/fa-solid.ttf");
   wordFont = loadFont("fonts/joystix-monospace.otf");
-  alert("WELCOME TO LEVIATHAN'S LAIR");
-     playerName = prompt("Please enter your name (max 10 chars)");
-     difficultyLevel = prompt(
-      "Enter difficulty level (NOVICE, NORMAL, EXPERT)"
-    );
 }
 
 function createGame() {
-
   game = new Game(difficultyLevel, name);
 }
 
+let nameField;
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
+  playerName = prompt(
+    "Welcome to Leviathan's Lair!\nPlease enter your name (max 10 chars)",
+    "BOB"
+  );
+  difficultyLevel = prompt(
+    "Enter difficulty level (NOVICE, NORMAL, EXPERT)",
+    "NORMAL"
+  );
   textFont(wordFont);
   createGame();
 }
 
-window.onresize = function () {
-  canvas.size(window.innerWidth, window.innerHeight);
-};
+function windowResized() {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  resizeCanvas(window.innerWidth, window.innerHeight);
+}
 
 function endGamesRun() {
   // set the highest score
   game.getPlayer().setHighScore();
   // display info to player
-  alert(
+  const startOver = confirm(
     game.getPlayer().getPlayerName() +
       ", you've played all of your games! \n\n" +
       "Games Played: " +
@@ -55,14 +60,15 @@ function endGamesRun() {
       "Average Score: " +
       game.getPlayer().averageScore() +
       "\n\n" +
-      "Thanks for playing!"
+      "Start Over?"
   );
 
   // restart the game if they want to play again
-  if (prompt("Start Over?") == "Y") {
+  if (startOver) {
     createGame();
   } else {
-    alert("goodbye!");
+    remove();
+    document.getElementById("thanks").style.display = "block";
   }
 }
 
@@ -76,13 +82,13 @@ function gameOver() {
     game.getPlayer().getGameAttempts() < game.getPlayer().getNumberOfGames()
   ) {
     // check if player wants to play again
-    const playAgain = prompt(
+    const playAgain = confirm(
       "Game Over! You scored " +
         game.getPlayer().getCurrentScore() +
-        ".\nWould you like to play your next game?"
+        ".\nContinue?"
     );
 
-    if (playAgain == "Y") {
+    if (playAgain) {
       // reset the game to be played again
       game.reset();
     } else {
@@ -197,9 +203,10 @@ function draw() {
     fill(0);
     rect(0, 0, width, height);
     fill(255);
-    textFont(textFont, 80);
-    text("PAUSED", width / 2, height / 2 - 40, 80);
-    textSize(30);
-    text("Press p to continue", width / 2, height / 2 + 10, 30);
+    textFont(wordFont, 80);
+    textAlign(CENTER);
+    text("PAUSED", width / 2 - 40, height / 2 - 50, 80);
+    textSize(20);
+    text("Press p to continue", width / 2 - 190, height / 2 + 20, 380);
   }
 }

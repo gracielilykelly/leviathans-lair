@@ -1,6 +1,5 @@
 class Scoreboard {
-
-  constructor(){
+  constructor() {
     this.heightDim = height / 15;
     this.widthDim = width;
   }
@@ -43,14 +42,18 @@ class Scoreboard {
 
     // display current score
     textAlign(CENTER, CENTER);
-    text(player.getPlayerName() + ":" + player.getCurrentScore(), width/2, 25);
+    text(
+      player.getPlayerName() + ":" + player.getCurrentScore(),
+      width / 2,
+      25
+    );
 
     // display hearts
     let i = 0;
     do {
       textFont(iconFont, 15);
-      fill(252, 66, 123); 
-      text("\uf004", this.widthDim - (80 - (i * 20)), this.heightDim/2);
+      fill(252, 66, 123);
+      text("\uf004", this.widthDim - (80 - i * 20), this.heightDim / 2);
       i++;
     } while (i < submarine.getLives());
 
@@ -62,7 +65,7 @@ class Scoreboard {
       // grey out the shield
       fill(189, 195, 199);
     }
-    text("\uf712", width - 105, this.heightDim/2);
+    text("\uf712", width - 105, this.heightDim / 2);
 
     // display bomb
     if (submarine.getHasBomb()) {
@@ -70,6 +73,11 @@ class Scoreboard {
     } else {
       fill(189, 195, 199);
     }
-    text("\uf1e2", width - 130, this.heightDim/2);
+    text("\uf1e2", width - 130, this.heightDim / 2);
+
+    // display instructions
+    textFont(wordFont, 10);
+    textAlign(LEFT, CENTER);
+    text("Press [i] for controls ", width - 360, 30);
   }
 }

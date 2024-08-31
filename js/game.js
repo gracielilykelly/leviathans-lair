@@ -29,8 +29,10 @@ class Game {
 
   _setDifficultyLevel(difficultyLevel) {
     // set default if none provided
-    if (!difficultyLevel || !DIFFICULTY_LEVELS.includes(difficultyLevel)) {
+    if (!difficultyLevel || !DIFFICULTY_LEVELS.includes(difficultyLevel.toUpperCase())) {
       this.difficulty = DIFFICULTY_LEVELS[1];
+    } else {
+      this.difficulty = difficultyLevel.toUpperCase();
     }
   }
 

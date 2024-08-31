@@ -59,7 +59,7 @@ class Enemy {
     } else if (enemyType === "SHARK") {
       this.setTravelSpeed(0.3);
       this.setLives(3);
-      this.setFillColor(color(37, 204, 247));
+      this.setFillColor(color(241, 242, 246));
       this.setIcon("\uf72c");
       this.setSize(80);
       this.setScoreAmount(100);
@@ -314,19 +314,20 @@ class Enemy {
 
   drawHealthBar() {
     // draw a health bar
-    stroke(47, 53, 66);
-    strokeWeight(3);
+    stroke(46, 213, 115);
+    strokeWeight(1);
     let i = 0;
     while (i < this.lives) {
       fill(46, 213, 115);
       rect(
-        this.asset.getXCord() + 10 * i,
+        this.asset.getXCord() - 10 * i,
         this.asset.getYCord() - (this.size / 2 + 15),
         10,
         10
       );
       i++;
     }
+    noStroke();
   }
 
   render() {
