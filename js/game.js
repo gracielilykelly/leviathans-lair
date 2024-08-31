@@ -4,7 +4,6 @@ const DIFFICULTY_LEVELS = ["NOVICE", "NORMAL", "EXPERT"];
 
 class Game {
   constructor(chosenDifficulty, playerName) {
-    this.difficulty = chosenDifficulty;
     this.lives = 3;
     this.boulderMinSize = 50;
     this.boulderMaxSize = 100;
@@ -23,8 +22,16 @@ class Game {
     this.numberOfBoulders = 0;
     this.numberOfEnemies = 0;
     this.pickupDropPercentage;
-    this._setPropsBasedOnDifficulty(chosenDifficulty);
+    this._setDifficultyLevel(chosenDifficulty);
+    this._setPropsBasedOnDifficulty(this.difficulty);
     this.initializeAssets();
+  }
+
+  _setDifficultyLevel(difficultyLevel) {
+    // set default if none provided
+    if (!difficultyLevel || !DIFFICULTY_LEVELS.includes(difficultyLevel)) {
+      this.difficulty = DIFFICULTY_LEVELS[1];
+    }
   }
 
   _setPropsBasedOnDifficulty(difficultyLevel) {
@@ -54,9 +61,7 @@ class Game {
 
   initializeAssets() {
     this.scoreboard = new Scoreboard();
-    if (this.lives < 3) {
-      this.submarine = new Submarine();
-    }
+    this.submarine = new Submarine();
 
     // create assets
     this.boulders = Array.from(
@@ -166,7 +171,7 @@ class Game {
      */
     if (this.difficulty == "EXPERT") {
       // create fast and small boulders
-      this.boulders[index] = new Boulder(2.1);
+      this.boulders[index] = new Boulder(10);
     } else {
       this.boulders[index] = new Boulder(
         floor(random(this.boulderMinSize, this.boulderMaxSize))

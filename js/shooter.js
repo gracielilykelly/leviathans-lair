@@ -50,7 +50,6 @@ class Shooter {
         }
         // shoot missiles in direction chosen
         projectiles[indexes[i]] = new Projectile();
-        console.log("WEAPON TYPE", this.weaponType);
         projectiles[indexes[i]].asEnemyAndBombProjectile(
           xCord,
           yCord,
