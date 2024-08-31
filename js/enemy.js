@@ -55,7 +55,7 @@ class Enemy {
       this.setWeaponType("BOLT");
       this.setScoreAmount(50);
       this.setAllowedAction(true);
-      this.setProjectileCount(5);
+      this.setProjectileCount(10);
     } else if (enemyType === "SHARK") {
       this.setTravelSpeed(0.3);
       this.setLives(3);
@@ -64,7 +64,8 @@ class Enemy {
       this.setSize(80);
       this.setScoreAmount(100);
     } else if (enemyType === "PUFFERFISH") {
-      this.setActionTimer(floor(random(200, 1500)));
+      this.setLives(1);
+      this.setActionTimer(Math.floor(Math.random() * 1500 + 200));
       this.setTravelSpeed(0.25);
       this.setAngle(random(0, TWO_PI));
       this.setFillColor(color(248, 239, 186));
@@ -73,22 +74,24 @@ class Enemy {
     } else if (enemyType === "PIRANHA") {
       this.setLives(1);
       this.setSize(25);
+      this.setTravelSpeed(0.5);
       this.setFillColor(color(154, 236, 219));
       this.setIcon("\uf578");
-      this.setActionTimer(floor(random(50, 200)));
-      this.setTravellingLeft(floor(random(0, 2)) > 0);
+      this.setActionTimer(Math.floor(Math.random() * 200 + 50));
+      this.setTravellingLeft(Math.floor(Math.random() * 2) > 0);
       this.setScoreAmount(25);
     } else if (enemyType === "LEVIATHAN") {
       this.setLives(10);
       this.setSize(200);
+      this.setTravelSpeed(0.5);
       this.setFillColor(color(179, 55, 113));
       this.setIcon("\uf6d5");
       this.setActionTimer(100);
-      this.setTravellingLeft(floor(random(0, 2)) > 0);
+      this.setTravellingLeft(Math.floor(Math.random() * 2) > 0);
       this.setCanHaveWeapons(true);
       this.setWeaponType("FIRE");
       this.setScoreAmount(1000);
-      this.setProjectileCount(6);
+      this.setProjectileCount(10);
     }
     this.asset = new Asset(this.size, this.angle, this.travelSpeed);
     this.asset.configureEnemyBoulderAsset(
