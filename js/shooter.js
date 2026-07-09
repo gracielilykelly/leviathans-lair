@@ -36,7 +36,6 @@ class Shooter {
     // load and shoot multiple projectiles
     if (this.allowFire) {
       let a = 0;
-      let isEnemy = true;
 
       for (let i = 0; i < indexes.length; i++) {
         if (this.weaponType === "BOLT") {
@@ -46,7 +45,6 @@ class Shooter {
           yCord = 270 + 30 * (i + 1);
         } else if (this.weaponType == "BOMB") {
           a = 15 * (i + 1);
-          isEnemy = false;
         }
         // shoot missiles in direction chosen
         projectiles[indexes[i]] = new Projectile();
@@ -76,17 +74,19 @@ class Projectile {
     this.weaponType = "";
   }
 
-  // submarine bullet
   asSubmarineBullet(x, y, dir) {
-    this.xCord = x;
-    this.yCord = y;
+    // Start at the submarine's front cannon
+    this.xCord = x + cos(dir) * 43;
+    this.yCord = y + sin(dir) * 43;
+
     this.direction = dir;
     this.alive = true;
     this.fired = false;
-    this.weaponType = "";
-    this.travelSpeed = 3;
-    this.setIsEnemy("BULLET");
-    this.setProjectileSize();
+    this.weaponType = "LASER";
+
+    // Faster than the old circular projectile
+    this.travelSpeed = 9;
+    this.size = 9;
   }
 
   // enemy and bomb projectile
@@ -123,14 +123,6 @@ class Projectile {
     return this.alive;
   }
 
-  isEnemy() {
-    return this.isEnemy;
-  }
-
-  fired() {
-    return this.fired;
-  }
-
   // setters
   toggleAlive() {
     this.alive = !this.alive;
@@ -146,8 +138,10 @@ class Projectile {
      */
     if (weapon === "FIRE") {
       this.size = 20;
-    } else if (weapon === "BOLT" || weapon === "BOMB") {
+    } else if (weapon === "BOLT") {
       this.size = 15;
+    } else if (weapon === "BOMB") {
+      this.size = 20;
     } else {
       this.size = 7;
     }
@@ -169,7 +163,7 @@ class Projectile {
       this.xCord + this.size / 2,
       this.yCord + this.size / 2,
       xPos,
-      yPos
+      yPos,
     );
     if (this.distance < s / 2 + this.size) {
       return true;
@@ -182,7 +176,7 @@ class Projectile {
     if (!this.isEnemy && this.fired && this.alive) {
       return this.impactMade(xPos, yPos, s);
     }
-    return this.false;
+    return false;
   }
 
   isHittingPlayer(xPos, yPos, s) {
@@ -210,27 +204,85 @@ class Projectile {
     }
   }
 
-  render() {
-    // displays the projectile
-    if (this.alive && this.fired) {
-      // render enemy projectiles
-      textFont(iconFont, this.size);
-      if (this.weaponType === "BOLT") {
-        fill(214, 162, 232);
-        text("\uf0e7", this.xCord, this.yCord);
-      } else if (this.weaponType === "FIRE") {
-        fill(255, 63, 52);
-        text("\uf06d", this.xCord, this.yCord);
-      } else if (this.weaponType === "BOMB") {
-        fill(253, 114, 114);
-        text("\uf1e2", this.xCord, this.yCord);
-      } else {
-        // render submarine projectile
-        fill(255);
+  drawLaserDot() {
+    noStroke();
 
-        ellipse(this.xCord, this.yCord, this.size, this.size);
-      }
+    fill(0, 220, 255, 70);
+    circle(this.xCord, this.yCord, this.size + 8);
+
+    fill(0, 235, 255);
+    circle(this.xCord, this.yCord, this.size);
+
+    fill(255);
+    circle(this.xCord, this.yCord, Math.max(2, this.size * 0.4));
+  }
+
+  render() {
+    push();
+
+    if (this.weaponType === "SUBMARINE") {
+      this.drawLaserDot();
+    } else if (this.weaponType === "FIRE") {
+      this.drawFireball();
+    } else if (this.weaponType === "BOMB") {
+      this.drawBomb();
+    } else if (this.weaponType === "BOLT") {
+      noStroke();
+
+      fill(160, 80, 255, 60);
+      circle(this.xCord, this.yCord, this.size + 7);
+
+      fill(175, 95, 255);
+      circle(this.xCord, this.yCord, this.size);
+
+      fill(255);
+      circle(this.xCord, this.yCord, Math.max(2, this.size * 0.35));
+    } else {
+      noStroke();
+      fill(255);
+      circle(this.xCord, this.yCord, this.size);
     }
+
+    pop();
+  }
+
+  drawBomb() {
+    const pulse = 1 + sin(frameCount * 0.25) * 0.12;
+
+    push();
+    translate(this.xCord, this.yCord);
+
+    noStroke();
+
+    fill(255, 90, 35, 55);
+    circle(0, 0, 17 * pulse);
+
+    // Main projectile
+    fill(255, 105, 40);
+    circle(0, 0, 10);
+
+    fill(255, 225, 145);
+    circle(-1, -1, 4);
+
+    pop();
+  }
+
+  drawFireball() {
+    const x = this.xCord;
+    const y = this.yCord;
+
+    noStroke();
+
+    fill(255, 55, 10, 55);
+    circle(x, y, this.size + 12);
+
+    fill(255, 75, 10);
+    circle(x, y, this.size);
+
+    fill(255, 180, 30);
+    circle(x + 2, y, this.size * 0.62);
+
+    fill(255, 245, 170);
+    circle(x + 3, y, this.size * 0.25);
   }
 }
-
