@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leviathan's Lair</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/test.png">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.min.js"></script>
     <script src="js/asset.js" defer></script>
@@ -18,14 +18,100 @@
 <body>
     <div id="p5_loading"></div>
     <div id="game"></div>
-    <div id="thanks" class="container" style="display:none">
-        <h1>Thanks for Playing Leviathan's Lair!</h1>
-        <p>Check out more of my projects on GitHub</p>
-        <div class="button-container">
-            <a href="https://github.com/gracielilykelly" target="_blank" class="github-link">View GitHub</a>
-            <button onclick="window.location.reload();" class="play-again-button">Play Again</button>
+    <button id="pause-resume-button" type="button" class="game-button primary-button" hidden>Resume Game</button>
+
+    <section id="start-screen" class="state-screen" aria-labelledby="start-title">
+        <div class="sonar-ring sonar-ring-one"></div>
+        <div class="sonar-ring sonar-ring-two"></div>
+        <div class="sonar-ring sonar-ring-three"></div>
+
+        <div class="state-panel start-panel">
+            <h1 id="start-title">Leviathan's Lair</h1>
+            <p class="screen-copy">Navigate the treacherous waters</p>
+
+            <form id="start-form" class="start-form">
+                <label for="player-name">Captain name</label>
+                <input id="player-name" name="playerName" type="text" maxlength="10" value="BOB" autocomplete="nickname"
+                    required>
+
+                <div class="difficulty-group">
+                    <span class="form-label">Difficulty</span>
+                    <div class="difficulty-options">
+                        <label><input type="radio" name="difficulty" value="NOVICE"> Novice</label>
+                        <label><input type="radio" name="difficulty" value="NORMAL" checked> Normal</label>
+                        <label><input type="radio" name="difficulty" value="EXPERT"> Expert</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="game-button primary-button">Start</button>
+            </form>
+
+            <div class="panel-divider"></div>
+            <h2 class="scores-title">High Scores</h2>
+            <ol id="start-high-scores" class="high-score-list"></ol>
         </div>
-    </div>
+    </section>
+
+    <section id="game-over-screen" class="state-screen" hidden aria-labelledby="game-over-title">
+        <div class="state-panel game-over-panel">
+            <h1 id="game-over-title">Game Over</h1>
+            <p class="result-score">Score <strong id="final-score">0</strong></p>
+
+            <h2 class="scores-title">High Scores</h2>
+            <ol id="game-over-high-scores" class="high-score-list"></ol>
+
+            <div class="button-container state-actions">
+                <button id="restart-button" type="button" class="game-button primary-button">Play Again</button>
+                <button id="leave-button" type="button" class="game-button danger-button">Quit</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="dialog-screen" class="state-screen dialog-screen" hidden aria-labelledby="dialog-title">
+        <div class="state-panel dialog-panel">
+            <h1 id="dialog-title">Controls</h1>
+            <ul id="controls-list" class="controls-list">
+                <li><kbd>↑</kbd> <kbd>↓</kbd><span>Move submarine</span></li>
+                <li><kbd>←</kbd> <kbd>→</kbd><span>Rotate submarine</span></li>
+                <li><kbd>Space</kbd><span>Shoot projectile</span></li>
+                <li><kbd>B</kbd><span>Shoot bombs</span></li>
+                <li><kbd>S</kbd><span>Activate shield</span></li>
+                <li><kbd>P</kbd><span>Pause</span></li>
+                <li><kbd>E</kbd><span>End Game</span></li>
+            </ul>
+            <p id="quit-message" class="screen-copy" hidden>End this game and return to the results screen?</p>
+            <div class="button-container">
+                <button id="dialog-close-button" type="button" class="game-button primary-button">Resume Game</button>
+                <button id="confirm-quit-button" type="button" class="game-button danger-button" hidden>Quit</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="thanks" class="state-screen" hidden aria-labelledby="thanks-title">
+        <div class="sonar-ring sonar-ring-one"></div>
+        <div class="sonar-ring sonar-ring-two"></div>
+        <div class="sonar-ring sonar-ring-three"></div>
+
+        <div class="state-panel game-over-panel">
+            <h1 id="thanks-title">Thanks for Playing!</h1>
+            <p class="screen-copy">Your score has been saved</p>
+
+            <div class="panel-divider"></div>
+
+            <h2 class="scores-title">High Scores</h2>
+            <ol id="thanks-high-scores" class="high-score-list"></ol>
+
+            <div class="button-container state-actions">
+                <button id="thanks-play-again" type="button" class="game-button primary-button">
+                    Play Again
+                </button>
+                <a href="https://github.com/gracielilykelly" target="_blank" rel="noopener noreferrer"
+                    class="game-button">
+                    View GitHub
+                </a>
+            </div>
+        </div>
+    </section>
 </body>
 
 </html>
