@@ -4,17 +4,16 @@ const DIFFICULTY_LEVELS = ["NOVICE", "NORMAL", "EXPERT"];
 
 class Game {
   constructor(chosenDifficulty, playerName) {
-    this.lives = 3;
     this.boulderMinSize = 50;
     this.boulderMaxSize = 100;
     this.player = new Player(playerName);
-    this.runGame;
+    this.runGame = false;
     this.bossAdded = false;
     this.bossDefeated = false;
     this.pickupsToInclude = [];
     this.enemiesToInclude = [];
     this.submarine = new Submarine();
-    this.scoreboard;
+    this.scoreboard = null;
     this.boulders = [];
     this.projectiles = [];
     this.pickups = [];
@@ -29,7 +28,10 @@ class Game {
 
   _setDifficultyLevel(difficultyLevel) {
     // set default if none provided
-    if (!difficultyLevel || !DIFFICULTY_LEVELS.includes(difficultyLevel.toUpperCase())) {
+    if (
+      !difficultyLevel ||
+      !DIFFICULTY_LEVELS.includes(difficultyLevel.toUpperCase())
+    ) {
       this.difficulty = DIFFICULTY_LEVELS[1];
     } else {
       this.difficulty = difficultyLevel.toUpperCase();
@@ -68,18 +70,18 @@ class Game {
     // create assets
     this.boulders = Array.from(
       { length: this.numberOfBoulders },
-      () => new Boulder()
+      () => new Boulder(),
     );
     this.pickups = Array.from(
       { length: this.numberOfBoulders },
-      () => new Pickup()
+      () => new Pickup(),
     );
     this.projectiles = Array.from({ length: 150 }, () => new Projectile());
 
-    // create enemies
+    this.enemies = [];
     for (let i = 0; i < this.numberOfEnemies; i++) {
       this.enemies[i] = new Enemy(
-        this.enemiesToInclude[floor(random(0, this.enemiesToInclude.length))]
+        this.enemiesToInclude[floor(random(0, this.enemiesToInclude.length))],
       );
       this.enemies[i].getAsset().setSpawnLocationForSubmarine(this.submarine);
     }
@@ -176,7 +178,7 @@ class Game {
       this.boulders[index] = new Boulder(10);
     } else {
       this.boulders[index] = new Boulder(
-        floor(random(this.boulderMinSize, this.boulderMaxSize))
+        floor(random(this.boulderMinSize, this.boulderMaxSize)),
       );
     }
     this.boulders[index]
@@ -191,7 +193,7 @@ class Game {
         this.projectiles[i].isHittingPlayer(
           this.submarine.getXCord(),
           this.submarine.getYCord(),
-          this.submarine.getSize()
+          this.submarine.getSize(),
         )
       ) {
         this.submarine.handleHit();
@@ -202,7 +204,7 @@ class Game {
         const hitBoulder = this.projectiles[i].isHitting(
           this.boulders[j].getAsset().getXCord(),
           this.boulders[j].getAsset().getYCord(),
-          this.boulders[j].getAsset().getSize()
+          this.boulders[j].getAsset().getSize(),
         );
 
         if (hitBoulder) {
@@ -215,7 +217,7 @@ class Game {
             this.boulders[j].getAsset().getYCord(),
             this.pickupsToInclude[
               floor(random(0, this.pickupsToInclude.length))
-            ]
+            ],
           );
 
           //calculate drop rate for pickup and dsiplay it
@@ -235,38 +237,37 @@ class Game {
 
       for (let k = 0; k < this.enemies.length; k++) {
         //check if hitting an enemy
-        let hitEnemy = this.projectiles[i].isHitting(
+        const hitEnemy = this.projectiles[i].isHitting(
           this.enemies[k].getAsset().getXCord(),
           this.enemies[k].getAsset().getYCord(),
-          this.enemies[k].getAsset().getSize()
+          this.enemies[k].getAsset().getSize(),
         );
 
         if (hitEnemy) {
-          this.enemies[k].loseLife();
+          const enemy = this.enemies[k];
 
-          if (this.enemies[k].getLives() <= 0) {
-            this.player.increaseCurrentScore(this.enemies[k].getScoreAmount());
-            if (this.enemies[k].getType() == "LEVIATHAN") {
-              // remove leviathan from list of enemies
-              let levIndx = this.enemies.indexOf(
-                (enemy) => enemy.getType() == "LEVIATHAN"
-              );
-              this.enemies.splice(levIndx, 1);
+          // Consume the projectile immediately so this hit cannot be applied to
+          // another enemy (or to a replacement enemy) during the same frame.
+          this.projectiles[i] = new Projectile();
+          enemy.loseLife();
+
+          if (enemy.getLives() <= 0) {
+            this.player.increaseCurrentScore(enemy.getScoreAmount());
+            if (enemy.getType() == "LEVIATHAN") {
+              this.enemies.splice(k, 1);
               this.setBossDefeated(true);
               this.setBossAdded(false);
             } else {
-              // remove current enemy and add a new enemy
               this.enemies[k] = new Enemy(
                 this.enemiesToInclude[
                   floor(random(0, this.enemiesToInclude.length))
-                ]
+                ],
               );
-              this.enemies[k]
-                .getAsset()
-                .setSpawnLocationForSubmarine(this.submarine);
+              this.enemies[k].getAsset().setSpawnLocation();
             }
           }
-          this.projectiles[i] = new Projectile();
+
+          break;
         }
       }
 
@@ -354,7 +355,7 @@ class Game {
               this.projectiles,
               this.getAvailableProjectileIndexes(enemy.getProjectileCount()),
               enemy.getAsset().getXCord(),
-              enemy.getAsset().getYCord()
+              enemy.getAsset().getYCord(),
             );
         }
       }
@@ -386,100 +387,272 @@ class Game {
     this.scoreboard.render(this.player, this.submarine);
     this.handleSubmarine();
   }
-
-  reset() {
-    // reset the game
-    this.player.resetCurrentScore();
-    this.setBossAdded(false);
-    this.setBossDefeated(false);
-    this.initializeAssets();
-  }
 }
 
-
-// Scoreboard
 class Scoreboard {
   constructor() {
-    this.heightDim = height / 15;
+    this.heightDim = 92;
     this.widthDim = width;
   }
 
-  // getters
   getHeightDim() {
     return this.heightDim;
   }
 
-  getWidthDim() {
-    return this.widthDim;
-  }
-
-  // setters
-  setHeightDim(h) {
-    this.heightDim = h;
-  }
-
-  setWidthDim(w) {
-    this.widthDim = w;
-  }
-
-  // methods
   render(player, submarine) {
-    /* Displays the scoreboard on the screen
-     params:
-     player (Player) - the player whose info you wish to display
-     submarine (Submarine) - the submarine of which info you wish to show
-     */
-    fill(79, 79, 178);
+    this.widthDim = width;
+
+    push();
+
+    this.drawMainPanel();
+    this.drawHullSection(submarine);
+    this.drawScoreSection(player);
+    this.drawEquipmentSection(submarine);
+    this.drawControlsSection();
+    this.drawBottomTrim();
+
+    pop();
+  }
+
+  drawMainPanel() {
+    const ctx = drawingContext;
+
+    ctx.save();
+
+    const panelGradient = ctx.createLinearGradient(0, 0, 0, this.heightDim);
+
+    panelGradient.addColorStop(0, "rgba(27, 51, 67, 0.98)");
+    panelGradient.addColorStop(0.5, "rgba(10, 27, 40, 0.98)");
+    panelGradient.addColorStop(1, "rgba(4, 15, 25, 0.98)");
+
+    ctx.fillStyle = panelGradient;
+    ctx.fillRect(0, 0, this.widthDim, this.heightDim);
+
+    ctx.restore();
+
+    // Outer metal frame
+    noFill();
+    stroke(91, 135, 151);
+    strokeWeight(3);
+    rect(3, 3, this.widthDim - 6, this.heightDim - 6, 5);
+
+    stroke(20, 226, 211, 80);
+    strokeWeight(1);
+    rect(8, 8, this.widthDim - 16, this.heightDim - 16, 3);
+
+    // Internal panels
+    fill(2, 18, 27, 170);
+    stroke(68, 107, 119);
+    strokeWeight(1);
+
+    rect(18, 15, 270, 60, 5);
+    rect(this.widthDim / 2 - 175, 15, 350, 60, 5);
+    // Keep equipment and controls visually separate.
+    rect(this.widthDim - 335, 15, 218, 60, 5);
+    rect(this.widthDim - 108, 15, 90, 60, 5);
+  }
+
+
+  drawHullSection(submarine) {
+    const x = 32;
+    const y = 25;
+
     noStroke();
-    rect(0, 0, this.widthDim, this.heightDim);
-    textFont(wordFont, 30);
-    fill(255, 184, 28);
-
-    // display game count
-    const currentGame = player.getGameAttempts() + 1;
-    textAlign(LEFT, CENTER);
-    text("Game " + currentGame + "/" + player.getNumberOfGames(), 30, 25);
-
-    // display current score
-    textAlign(CENTER, CENTER);
-    text(
-      player.getPlayerName() + ":" + player.getCurrentScore(),
-      width / 2,
-      25
-    );
-
-    // display hearts
-    let i = 0;
-    do {
-      textFont(iconFont, 15);
-      fill(252, 66, 123);
-      text("\uf004", this.widthDim - (80 - i * 20), this.heightDim / 2);
-      i++;
-    } while (i < submarine.getLives());
-
-    textFont(iconFont, 20);
-    // display shield
-    if (submarine.getHasShield() && !submarine.getShieldActive()) {
-      fill(46, 204, 113);
-    } else {
-      // grey out the shield
-      fill(189, 195, 199);
-    }
-    text("\uf712", width - 105, this.heightDim / 2);
-
-    // display bomb
-    if (submarine.getHasBomb()) {
-      fill(253, 114, 114);
-    } else {
-      fill(189, 195, 199);
-    }
-    text("\uf1e2", width - 130, this.heightDim / 2);
-
-    // display instructions
-    fill(189, 195, 199);
+    fill(106, 195, 205);
     textFont(wordFont, 10);
     textAlign(LEFT, CENTER);
-    text("Press [i] for controls ", width - 360, 30);
+    text("HULL INTEGRITY", x, y);
+
+    const maxLives = 3;
+    const currentLives = submarine.getLives();
+
+    const barX = x;
+    const barY = y + 16;
+    const segmentWidth = 75;
+    const segmentHeight = 18;
+    const gap = 6;
+
+    for (let i = 0; i < maxLives; i++) {
+      const segmentX = barX + i * (segmentWidth + gap);
+
+      stroke(101, 134, 145);
+      strokeWeight(1);
+
+      if (i < currentLives) {
+        if (currentLives === 1) {
+          fill(241, 78, 78);
+        } else if (currentLives === 2) {
+          fill(244, 180, 68);
+        } else {
+          fill(42, 204, 154);
+        }
+      } else {
+        fill(28, 48, 56);
+      }
+
+      rect(segmentX, barY, segmentWidth, segmentHeight, 3);
+
+      if (i < currentLives) {
+        noStroke();
+        fill(255, 255, 255, 55);
+        rect(segmentX + 3, barY + 3, segmentWidth - 6, 4, 2);
+      }
+    }
+  }
+
+  drawScoreSection(player) {
+    const centreX = this.widthDim / 2;
+
+    noStroke();
+    fill(78, 224, 220);
+    textFont(wordFont, 10);
+    textAlign(CENTER, CENTER);
+    text("SCORE", centreX, 24);
+
+    drawingContext.shadowBlur = 12;
+    drawingContext.shadowColor = "rgba(255, 190, 60, 0.65)";
+
+    fill(255, 191, 61);
+    textFont(wordFont, 18);
+    text(String(player.getCurrentScore()).padStart(6, "0"), centreX, 45);
+
+    drawingContext.shadowBlur = 0;
+
+    fill(128, 164, 174);
+    textFont(wordFont, 10);
+
+    text(player.getPlayerName(), centreX, 65);
+  }
+
+  drawEquipmentSection(submarine) {
+    const startX = this.widthDim - 326;
+
+    noStroke();
+    fill(106, 195, 205);
+    textFont(wordFont, 10);
+    textAlign(LEFT, CENTER);
+    text("EQUIPMENT", startX, 25);
+
+    this.drawEquipmentButton(
+      startX,
+      39,
+      "\uf712",
+      "SHIELD",
+      "[S]",
+      submarine.getHasShield(),
+      color(55, 224, 166),
+    );
+
+    this.drawEquipmentButton(
+      startX + 104,
+      39,
+      "\uf1e2",
+      "BOMB",
+      "[B]",
+      submarine.getHasBomb(),
+      color(241, 92, 92),
+    );
+  }
+
+  drawControlsSection() {
+    const startX = this.widthDim - 98;
+
+    noStroke();
+    fill(106, 195, 205);
+    textFont(wordFont, 10);
+    textAlign(LEFT, CENTER);
+    text("CONTROLS", startX, 25);
+
+    fill(15, 37, 48);
+    stroke(80, 115, 126);
+    strokeWeight(1);
+    rect(startX, 39, 70, 27, 4);
+
+    noStroke();
+    fill(119, 150, 160);
+    textFont(wordFont, 7);
+    textAlign(CENTER, CENTER);
+    text("[I] HELP", startX + 35, 53);
+  }
+
+  drawEquipmentButton(x, y, icon, label, shortcut, active, activeColour) {
+    strokeWeight(1);
+
+    if (active) {
+      drawingContext.shadowBlur = 11;
+      drawingContext.shadowColor =
+        "rgba(" +
+        red(activeColour) +
+        "," +
+        green(activeColour) +
+        "," +
+        blue(activeColour) +
+        ",0.6)";
+
+      fill(11, 48, 52);
+      stroke(activeColour);
+    } else {
+      drawingContext.shadowBlur = 0;
+      fill(21, 37, 45);
+      stroke(70, 91, 99);
+    }
+
+    rect(x, y - 3, 96, 33, 4);
+
+    noStroke();
+
+    if (active) {
+      fill(activeColour);
+    } else {
+      fill(145, 171, 177);
+    }
+
+    textFont(iconFont, 18);
+    textAlign(CENTER, CENTER);
+    text(icon, x + 16, y + 13);
+
+    // Give the equipment name and shortcut their own rows so both remain
+    // readable within the compact header panel.
+    textFont(wordFont, 8);
+    textAlign(LEFT, CENTER);
+    text(label, x + 31, y + 8);
+
+    if (!active) {
+      fill(105, 139, 148);
+    }
+    textFont(wordFont, 8);
+    text(shortcut, x + 31, y + 20);
+
+    drawingContext.shadowBlur = 0;
+  }
+
+  drawBottomTrim() {
+    noStroke();
+
+    fill(8, 10, 13);
+    rect(0, this.heightDim - 7, this.widthDim, 7);
+
+    // Yellow/black hazard stripe
+    const stripeWidth = 24;
+
+    for (let x = 0; x < this.widthDim; x += stripeWidth) {
+      if ((x / stripeWidth) % 2 === 0) {
+        fill(213, 154, 44);
+      } else {
+        fill(30, 34, 37);
+      }
+
+      quad(
+        x,
+        this.heightDim - 7,
+        x + stripeWidth - 7,
+        this.heightDim - 7,
+        x + stripeWidth,
+        this.heightDim,
+        x + 7,
+        this.heightDim,
+      );
+    }
   }
 }
 
@@ -487,10 +660,6 @@ class Scoreboard {
 class Player {
   constructor(playerName) {
     this.currentScore = 0;
-    this.scores = [];
-    this.highScore = 0;
-    this.gameAttempts = 0;
-    this.numberOfGames = 3;
     this.name = this._setPlayerName(playerName);
   }
 
@@ -508,18 +677,6 @@ class Player {
   }
 
   // getters
-  getScoresList() {
-    return this.scores;
-  }
-
-  getGameAttempts() {
-    return this.gameAttempts;
-  }
-
-  getHighScore() {
-    return this.highScore;
-  }
-
   getCurrentScore() {
     return this.currentScore;
   }
@@ -528,75 +685,7 @@ class Player {
     return this.name;
   }
 
-  getNumberOfGames() {
-    return this.numberOfGames;
-  }
-
-  // setters
-  setPlayerName(playerName) {
-    // Clean the username and set it
-    if (playerName.length() > 10) {
-      this.name = playerName.substring(0, 10);
-    } else {
-      this.name = playerName.toUpperCase();
-    }
-  }
-  setHighScore() {
-    let scoretoSet = 0;
-    for (let i = 0; i < this.scores.length; i++) {
-      if (this.scores[i] > this.highScore) {
-        this.highScore = this.scores[i];
-      }
-    }
-    this.highScore = scoretoSet;
-  }
-
-  increaseGameAttempts() {
-    this.gameAttempts++;
-  }
-
-  resetCurrentScore() {
-    this.currentScore = 0;
-  }
-
   increaseCurrentScore(score) {
     this.currentScore += score;
   }
-
-  addScoretoList(score) {
-    const index = this.gameAttempts - 1;
-    this.scores[index] = score;
-  }
-
-  highestScore() {
-    // return the highest score in the scores array
-    let highestScore = this.scores[0];
-    for (let i = 1; i < this.gameAttempts; i++) {
-      if (this.scores[i] > highestScore) {
-        highestScore = this.scores[i];
-      }
-    }
-    return highestScore;
-  }
-
-  lowestScore() {
-    // return the lowest score in the scores array
-    let lowestScore = this.scores[0];
-    for (let i = 1; i < this.gameAttempts; i++) {
-      if (this.scores[i] < lowestScore) {
-        lowestScore = this.scores[i];
-      }
-    }
-    return lowestScore;
-  }
-
-  averageScore() {
-    // calculates and returns the average of all scores stored in array
-    let total = 0;
-    for (let i = 0; i < this.gameAttempts; i++) {
-      total = total + this.scores[i];
-    }
-    return Math.floor(total / this.gameAttempts);
-  }
 }
-
