@@ -238,20 +238,14 @@ function startExpedition() {
   setScreen("");
 }
 
-function startNewExpedition() {
-  createGame();
-  appState = "playing";
-  setScreen("");
-}
-
 async function gameOver() {
   if (appState !== "playing") return;
 
-  appState = "game-over";
+  appState = "thanks";
   const player = game.getPlayer();
   const finalScore = player.getCurrentScore();
   document.getElementById("final-score").textContent = finalScore;
-  setScreen("game-over-screen");
+  setScreen("thanks");
   renderScoreMessage("Saving score...", "loading-score");
 
   try {
@@ -304,9 +298,6 @@ function bindScreenControls() {
     event.preventDefault();
     startExpedition();
   });
-  document
-    .getElementById("restart-button")
-    .addEventListener("click", startNewExpedition);
   for (const difficultyOption of document.querySelectorAll(
     'input[name="difficulty"]',
   )) {
@@ -315,10 +306,6 @@ function bindScreenControls() {
       void renderHighScores();
     });
   }
-  document.getElementById("leave-button").addEventListener("click", () => {
-    appState = "thanks";
-    setScreen("thanks");
-  });
   document
     .getElementById("dialog-close-button")
     .addEventListener("click", closeDialog);

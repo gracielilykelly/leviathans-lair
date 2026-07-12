@@ -42,12 +42,10 @@ body {
     width: 70%;
     height: 1px;
     margin: 27px auto;
-    background: linear-gradient(
-        to right,
-        transparent,
-        rgba(86, 211, 211, 0.8),
-        transparent
-    );
+    background: linear-gradient(to right,
+            transparent,
+            rgba(86, 211, 211, 0.8),
+            transparent);
 }
 
 .game-button {
@@ -258,6 +256,30 @@ body {
     line-height: 1.6;
 }
 
+.thanks-message {
+    margin: 0;
+    color: #68d6db;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+}
+
+.game-over-panel .screen-copy {
+    margin-top: 22px;
+}
+
+.portfolio-link {
+    display: inline-block;
+    margin-top: 24px;
+    color: #78afb3;
+    font-size: 0.65rem;
+    line-height: 1.5;
+    text-underline-offset: 4px;
+    transition: color 160ms ease;
+}
+
+.portfolio-link:hover {
+    color: #bce4e3;
+}
+
 .start-form {
     display: grid;
     gap: 14px;
@@ -266,7 +288,7 @@ body {
     text-align: left;
 }
 
-.start-form > label,
+.start-form>label,
 .form-label {
     display: block;
     color: #68d6db;
@@ -364,8 +386,15 @@ body {
 }
 
 @keyframes latest-score-pulse {
-    0% { transform: scale(0.96); box-shadow: 0 0 28px rgba(255, 191, 61, 0.5); }
-    100% { transform: scale(1); box-shadow: 0 0 16px rgba(99, 215, 207, 0.16); }
+    0% {
+        transform: scale(0.96);
+        box-shadow: 0 0 28px rgba(255, 191, 61, 0.5);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 16px rgba(99, 215, 207, 0.16);
+    }
 }
 
 .confetti-celebration {
@@ -389,8 +418,15 @@ body {
 }
 
 @keyframes confetti-fall {
-    from { transform: translate3d(0, -5vh, 0) rotate(0deg); opacity: 1; }
-    to { transform: translate3d(var(--drift), 105vh, 0) rotate(var(--spin)); opacity: 0.15; }
+    from {
+        transform: translate3d(0, -5vh, 0) rotate(0deg);
+        opacity: 1;
+    }
+
+    to {
+        transform: translate3d(var(--drift), 105vh, 0) rotate(var(--spin));
+        opacity: 0.15;
+    }
 }
 
 .high-score-list .loading-score {
@@ -399,14 +435,27 @@ body {
 }
 
 @keyframes score-loading-pulse {
-    from { opacity: 0.45; }
-    to { opacity: 1; }
+    from {
+        opacity: 0.45;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .latest-high-score { animation: none; }
-    .confetti-celebration { display: none; }
-    .high-score-list .loading-score { animation: none; }
+    .latest-high-score {
+        animation: none;
+    }
+
+    .confetti-celebration {
+        display: none;
+    }
+
+    .high-score-list .loading-score {
+        animation: none;
+    }
 }
 
 .high-score-list .empty-score {
@@ -426,9 +475,6 @@ body {
     font-size: 2.5rem;
 }
 
-.state-actions {
-    margin-top: 25px;
-}
 
 .dialog-panel {
     max-width: 500px;
