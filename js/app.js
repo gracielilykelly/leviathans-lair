@@ -110,6 +110,7 @@ async function renderHighScores(providedScores) {
   let scores = providedScores;
   let unavailable = false;
   if (!scores) {
+    renderScoreMessage("Loading scores...", "loading-score");
     try {
       scores = await loadSharedHighScores();
     } catch (error) {
@@ -144,6 +145,15 @@ async function renderHighScores(providedScores) {
       item.append(captain, score);
       list.append(item);
     });
+  }
+}
+
+function renderScoreMessage(message, className = "") {
+  for (const list of document.querySelectorAll(".high-score-list")) {
+    const item = document.createElement("li");
+    item.className = `empty-score ${className}`.trim();
+    item.textContent = message;
+    list.replaceChildren(item);
   }
 }
 
@@ -194,6 +204,7 @@ async function gameOver() {
   const finalScore = player.getCurrentScore();
   document.getElementById("final-score").textContent = finalScore;
   setScreen("game-over-screen");
+  renderScoreMessage("Saving score...", "loading-score");
 
   try {
     const highScoreResult = await saveHighScore(player, finalScore);
