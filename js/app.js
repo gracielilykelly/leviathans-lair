@@ -24,6 +24,12 @@ function createGame() {
 }
 
 function setup() {
+  if (document.documentElement.classList.contains("mobile-device")) {
+    noCanvas();
+    noLoop();
+    return;
+  }
+
   pixelDensity(1);
   canvas = createCanvas(window.innerWidth, window.innerHeight);
   canvas.parent("game");
