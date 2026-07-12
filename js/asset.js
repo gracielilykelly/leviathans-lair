@@ -1,3 +1,5 @@
+let lastPufferTransitionFrame = -Infinity;
+
 class Asset {
   constructor() {
     this.xCord = 0;
@@ -46,6 +48,10 @@ class Asset {
 
   setYCord(y) {
     this.yCord = y;
+  }
+
+  setSize(size) {
+    this.size = size;
   }
 
   setHorizontalDirection(travelLeft) {
@@ -513,6 +519,7 @@ class Enemy {
     this.maxLives;
     this.bossActive;
     this.bossIntroTimer;
+    this.pufferStateTimer = 0;
     this.configureEnemy(enemyType);
   }
 
@@ -538,7 +545,8 @@ class Enemy {
       this.setScoreAmount(100);
     } else if (enemyType === "PUFFERFISH") {
       this.setLives(1);
-      this.setActionTimer(Math.floor(Math.random() * 1500 + 200));
+      this.setAllowedAction(false);
+      this.pufferStateTimer = floor(random(180, 301));
       this.setTravelSpeed(0.25);
       this.setAngle(random(0, TWO_PI));
       this.setFillColor(color(248, 239, 186));
@@ -753,26 +761,30 @@ class Enemy {
   }
 
   updatePufferFish() {
-    let timer = this.actionTimer;
+    this.pufferStateTimer -= 1;
+    if (this.pufferStateTimer <= 0) {
+      if (frameCount - lastPufferTransitionFrame < 60) {
+        this.pufferStateTimer = floor(random(60, 121));
+      } else {
+        this.allowedAction = !this.allowedAction;
+        lastPufferTransitionFrame = frameCount;
+        this.pufferStateTimer = this.allowedAction
+          ? floor(random(90, 151))
+          : floor(random(180, 301));
+      }
+    }
 
-    // set to angry mode
     if (this.allowedAction) {
-      this.size = 100;
+      this.setSize(100);
       this.fillColor = color(253, 114, 114);
       this.icon = "\uf556";
-      timer = this.actionTimer / 2;
     } else {
-      // set to neutral mode
-      this.size = 50;
+      this.setSize(50);
       this.fillColor = color(248, 239, 186);
       this.icon = "\uf5a4";
     }
 
-    // allow pufferfish to get bigger/smaller
-    if (this.getActionCanBeTaken()) {
-      this.allowedAction = !this.allowedAction;
-    }
-
+    this.asset.setSize(this.size);
     this.asset.move(true);
   }
 
