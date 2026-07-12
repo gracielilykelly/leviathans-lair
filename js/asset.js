@@ -715,7 +715,7 @@ class Enemy {
       this.travellingLeft = true;
       this.shooter.setAllowFire(this.bossActive);
     } else {
-      this.asset.setXCord((x += 1 * this.travelSpeed));
+      this.asset.setXCord((x += 1.5 * this.travelSpeed));
       this.shooter.setAllowFire(false);
     }
   }
@@ -882,12 +882,6 @@ class Enemy {
     rectMode(CORNER);
     textAlign(CENTER, CENTER);
     textFont("sans-serif");
-
-    // Dark underwater panel
-    noStroke();
-    fill(2, 22, 32, 220);
-
-    rect(barX - 12, barY - 34, barWidth + 24, barHeight + 47, 8);
 
     // Boss title
     fill(170, 240, 245, 255);
@@ -1310,12 +1304,10 @@ class Enemy {
 
     endShape(CLOSE);
 
-
     noStroke();
     fill(255, 255, 255, 55);
 
     arc(-5, -3, 31, 24, PI, TWO_PI);
-
 
     stroke(255, 255, 255, 55);
     strokeWeight(2);
@@ -1323,7 +1315,6 @@ class Enemy {
     line(-11, -9, -8, 5);
     line(0, -12, 0, 7);
     line(11, -9, 8, 5);
-
 
     noFill();
     stroke(red(jellyColour), green(jellyColour), blue(jellyColour), 180);
@@ -1347,7 +1338,6 @@ class Enemy {
         46,
       );
     }
-
 
     noStroke();
     fill(20, 16, 35, 170);
@@ -1405,7 +1395,6 @@ class Enemy {
     vertex(24, 9);
     endShape(CLOSE);
 
-
     fill(49, 144, 169);
 
     beginShape();
@@ -1421,7 +1410,6 @@ class Enemy {
     vertex(-10, 20);
     vertex(12, 9);
     endShape(CLOSE);
-
 
     noFill();
     stroke(210, 255, 255, 70);
@@ -1855,6 +1843,4 @@ class Pickup {
 
     pop();
   }
-
-
 }
