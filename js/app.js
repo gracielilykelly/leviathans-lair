@@ -7,6 +7,12 @@ let appState = "start";
 let pausedFrame = null;
 let latestHighScoreId = null;
 let scoreboardClient = null;
+const highScoreRequests = new Map();
+const placementMedals = {
+  1: { symbol: "🥇", label: "Gold medal" },
+  2: { symbol: "🥈", label: "Silver medal" },
+  3: { symbol: "🥉", label: "Bronze medal" },
+};
 
 function preload() {
   iconFont = loadFont("fonts/fa-solid.ttf");
@@ -65,21 +71,37 @@ function getScoreboardClient() {
   return scoreboardClient;
 }
 
-async function loadSharedHighScores() {
+async function loadSharedHighScores(
+  difficulty = getScoreboardDifficulty(),
+  forceRefresh = false,
+) {
   const client = getScoreboardClient();
-  const difficulty = getScoreboardDifficulty();
   if (!client) throw new Error("Supabase scoreboard is not configured");
+  if (!forceRefresh && highScoreRequests.has(difficulty)) {
+    return highScoreRequests.get(difficulty);
+  }
 
-  const { data, error } = await client
-    .from("high_scores")
-    .select("id,name,score,difficulty,created_at")
-    .eq("difficulty", difficulty)
-    .order("score", { ascending: false })
-    .order("created_at", { ascending: true })
-    .limit(5);
+  const request = (async () => {
+    const { data, error } = await client
+      .from("high_scores")
+      .select("id,name,score,difficulty,created_at")
+      .eq("difficulty", difficulty)
+      .order("score", { ascending: false })
+      .order("created_at", { ascending: true })
+      .limit(5);
 
-  if (error) throw error;
-  return data.map((entry) => ({ ...entry, score: Number(entry.score) }));
+    if (error) throw error;
+    return data.map((entry) => ({ ...entry, score: Number(entry.score) }));
+  })();
+
+  highScoreRequests.set(difficulty, request);
+  try {
+    return await request;
+  } finally {
+    if (highScoreRequests.get(difficulty) === request) {
+      highScoreRequests.delete(difficulty);
+    }
+  }
 }
 
 async function saveHighScore(player, score) {
@@ -98,7 +120,7 @@ async function saveHighScore(player, score) {
     .single();
   if (error) throw error;
 
-  const scores = await loadSharedHighScores();
+  const scores = await loadSharedHighScores(entry.difficulty, true);
   const savedScore = scores.find((entry) => entry.id === data.id);
   const placement = savedScore
     ? new Set(
@@ -115,18 +137,21 @@ async function saveHighScore(player, score) {
 }
 
 async function renderHighScores(providedScores) {
+  const difficulty = getScoreboardDifficulty();
   let scores = providedScores;
   let unavailable = false;
   if (!scores) {
     renderScoreMessage("Loading scores...", "loading-score");
     try {
-      scores = await loadSharedHighScores();
+      scores = await loadSharedHighScores(difficulty);
     } catch (error) {
       console.warn("Shared scoreboard unavailable", error);
       scores = [];
       unavailable = true;
     }
   }
+
+  if (difficulty !== getScoreboardDifficulty()) return;
 
   for (const list of document.querySelectorAll(".high-score-list")) {
     list.replaceChildren();
@@ -152,6 +177,15 @@ async function renderHighScores(providedScores) {
       const captain = document.createElement("span");
       const score = document.createElement("strong");
       captain.textContent = `${placement}. ${entry.name}`;
+      const medalDetails = placementMedals[placement];
+      if (medalDetails) {
+        const medal = document.createElement("span");
+        medal.className = "score-medal";
+        medal.textContent = medalDetails.symbol;
+        medal.setAttribute("role", "img");
+        medal.setAttribute("aria-label", medalDetails.label);
+        captain.append(" ", medal);
+      }
       if (entry.id && entry.id === latestHighScoreId) {
         item.classList.add("latest-high-score");
       }
@@ -284,7 +318,6 @@ function bindScreenControls() {
   document.getElementById("leave-button").addEventListener("click", () => {
     appState = "thanks";
     setScreen("thanks");
-    void renderHighScores();
   });
   document
     .getElementById("dialog-close-button")
@@ -309,7 +342,6 @@ function bindScreenControls() {
   document.getElementById("thanks-play-again").addEventListener("click", () => {
     appState = "start";
     latestHighScoreId = null;
-    void renderHighScores();
     setScreen("start-screen");
   });
 }

@@ -343,6 +343,14 @@ body {
     color: #ffbf3d;
 }
 
+.score-medal {
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: 1rem;
+    line-height: 0.7;
+    vertical-align: middle;
+    filter: drop-shadow(0 0 4px rgba(255, 224, 145, 0.3));
+}
 
 .high-score-list .latest-high-score {
     margin: 3px -8px;

@@ -29,10 +29,10 @@
 
         <div class="state-panel start-panel">
             <h1 id="start-title">Leviathan's Lair</h1>
-            <p class="screen-copy">Navigate the treacherous waters</p>
+            <p class="screen-copy">Survive the treacherous depths</p>
 
             <form id="start-form" class="start-form">
-                <label for="player-name">Captain name</label>
+                <label for="player-name">Name</label>
                 <input id="player-name" name="playerName" type="text" maxlength="10" value="BOB" autocomplete="nickname"
                     required>
 
@@ -50,7 +50,7 @@
 
             <div class="panel-divider"></div>
             <h2 class="scores-title">High Scores</h2>
-            <ol id="start-high-scores" class="high-score-list"></ol>
+            <ul id="start-high-scores" class="high-score-list"></ul>
         </div>
     </section>
 
@@ -60,11 +60,11 @@
             <p class="result-score">Score <strong id="final-score">0</strong></p>
 
             <h2 class="scores-title">High Scores</h2>
-            <ol id="game-over-high-scores" class="high-score-list"></ol>
+            <ul id="game-over-high-scores" class="high-score-list"></ul>
 
             <div class="button-container state-actions">
                 <button id="restart-button" type="button" class="game-button primary-button">Play Again</button>
-                <button id="leave-button" type="button" class="game-button danger-button">Quit</button>
+                <button id="leave-button" type="button" class="game-button danger-button">Leave</button>
             </div>
         </div>
     </section>
@@ -81,9 +81,9 @@
                 <li><kbd>P</kbd><span>Pause</span></li>
                 <li><kbd>E</kbd><span>End Game</span></li>
             </ul>
-            <p id="quit-message" class="screen-copy" hidden>End this game and return to the results screen?</p>
+            <p id="quit-message" class="screen-copy" hidden>Are you sure you want to quit the game?</p>
             <div class="button-container">
-                <button id="dialog-close-button" type="button" class="game-button primary-button">Resume Game</button>
+                <button id="dialog-close-button" type="button" class="game-button primary-button">Resume</button>
                 <button id="confirm-quit-button" type="button" class="game-button danger-button" hidden>Quit</button>
             </div>
         </div>
@@ -95,13 +95,16 @@
         <div class="sonar-ring sonar-ring-three"></div>
 
         <div class="state-panel game-over-panel">
-            <h1 id="thanks-title">Thanks for Playing!</h1>
-            <p class="screen-copy">Your score has been saved</p>
+            <h1 id="thanks-title">Thank you for Playing</h1>
+            <p class="screen-copy">The depths await your return</p>
+            <p class="portfolio-link">
+                Enjoyed Leviathan's Lair? Check out my site for more projects
+            </p>
 
             <div class="panel-divider"></div>
 
             <h2 class="scores-title">High Scores</h2>
-            <ol id="thanks-high-scores" class="high-score-list"></ol>
+            <ul id="thanks-high-scores" class="high-score-list"></ul>
 
             <div class="button-container state-actions">
                 <button id="thanks-play-again" type="button" class="game-button primary-button">
