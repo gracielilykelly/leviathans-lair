@@ -94,10 +94,6 @@ class Game {
     return this.runGame;
   }
 
-  getPickupDropPercentage() {
-    return this.pickupDropPercentage;
-  }
-
   getDifficulty() {
     return this.difficulty;
   }

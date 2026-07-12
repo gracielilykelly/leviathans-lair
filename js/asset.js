@@ -585,10 +585,6 @@ class Enemy {
     return this.scoreAmount;
   }
 
-  getAllowedAction() {
-    return this.allowedAction;
-  }
-
   getAsset() {
     return this.asset;
   }
@@ -599,10 +595,6 @@ class Enemy {
 
   getActionCanBeTaken() {
     return frameCount % this.actionTimer == 0;
-  }
-
-  getActionTimer() {
-    return this.actionTimer;
   }
 
   getCanHaveWeapons() {
@@ -1725,10 +1717,6 @@ class Pickup {
     return this.size;
   }
 
-  getSpeed() {
-    return this.speed;
-  }
-
   getAllow() {
     return this.allow;
   }
@@ -1764,10 +1752,6 @@ class Pickup {
 
   setSize(pickupSize) {
     this.size = pickupSize;
-  }
-
-  setSpeed(pickupSpeed) {
-    this.speed = pickupSpeed;
   }
 
   displayPickup() {

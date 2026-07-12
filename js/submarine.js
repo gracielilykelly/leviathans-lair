@@ -35,16 +35,8 @@ class Submarine {
     return this.rotation;
   }
 
-  getRotationSpeed() {
-    return this.rotationSpeed;
-  }
-
   getLives() {
     return this.lives;
-  }
-
-  getMaxLives() {
-    return this.maxLives;
   }
 
   getMissileShooter() {
@@ -59,20 +51,12 @@ class Submarine {
     return this.invincibilityTimer;
   }
 
-  isInvincible() {
-    return this.invincible;
-  }
-
   getSize() {
     return this.size;
   }
 
   getHasShield() {
     return this.hasShield;
-  }
-
-  getShieldActive() {
-    return this.shieldActive;
   }
 
   getHasBomb() {
@@ -94,18 +78,6 @@ class Submarine {
 
   setSize(s) {
     this.size = s;
-  }
-
-  setShieldActive(isActive) {
-    this.shieldActive = isActive;
-  }
-
-  setRotationSpeed(speed) {
-    this.rotationSpeed = speed;
-  }
-
-  setMaxLives(l) {
-    this.maxLives = l;
   }
 
   setTravelSpeed(speed) {
