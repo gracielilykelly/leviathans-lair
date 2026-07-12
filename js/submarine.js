@@ -2,7 +2,7 @@ class Submarine {
   constructor() {
     this.xCord = width / 2;
     this.yCord = height / 2;
-    this.rotation = -HALF_PI;
+    this.rotation = 0;
     // allows the ship to rotate a quarter circle at a time
     this.rotationSpeed = QUARTER_PI;
     this.travelSpeed = 0; // TODO: set travel speed
