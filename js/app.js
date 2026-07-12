@@ -1,12 +1,12 @@
-let x = 50;
-let y = 50;
-let diameter = 50;
-let movingRight = true;
 let iconFont;
 let wordFont;
 let game;
 let playerName;
 let difficultyLevel;
+let appState = "start";
+let pausedFrame = null;
+const HIGH_SCORES_KEY = "leviathansLairHighScores";
+let latestHighScoreId = null;
 
 function preload() {
   iconFont = loadFont("fonts/fa-solid.ttf");
@@ -14,22 +14,16 @@ function preload() {
 }
 
 function createGame() {
-  game = new Game(difficultyLevel, name);
+  game = new Game(difficultyLevel, playerName);
 }
 
-let nameField;
 function setup() {
+  pixelDensity(1);
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  playerName = prompt(
-    "Welcome to Leviathan's Lair!\nPlease enter your name (max 10 chars)",
-    "BOB"
-  );
-  difficultyLevel = prompt(
-    "Enter difficulty level (NOVICE, NORMAL, EXPERT)",
-    "NORMAL"
-  );
+  canvas.parent("game");
   textFont(wordFont);
-  createGame();
+  bindScreenControls();
+  renderHighScores();
 }
 
 function windowResized() {
@@ -38,65 +32,223 @@ function windowResized() {
   resizeCanvas(window.innerWidth, window.innerHeight);
 }
 
-function endGamesRun() {
-  // set the highest score
-  game.getPlayer().setHighScore();
-  // display info to player
-  const startOver = confirm(
-    "Total Games Played: " +
-      game.getPlayer().getGameAttempts() +
-      "\n\n" +
-      "Highest Score: " +
-      game.getPlayer().highestScore() +
-      "\n" +
-      "Lowest Score:  " +
-      game.getPlayer().lowestScore() +
-      "\n" +
-      "Average Score: " +
-      game.getPlayer().averageScore() +
-      "\n\nStart Over?"
-  );
-
-  // restart the game if they want to play again
-  if (startOver) {
-    createGame();
-  } else {
-    remove();
-    document.getElementById("thanks").style.display = "flex";
+function setScreen(id) {
+  for (const screen of document.querySelectorAll(".state-screen")) {
+    screen.hidden = screen.id !== id;
   }
 }
 
-function gameOver() {
-  // Ends the game and shows info to the player
-  // add score to player's scores
-  game.getPlayer().addScoretoList(game.getPlayer().getCurrentScore());
-
-  // if the player still has games left to play ask if they want to continue to next game
-  if (
-    game.getPlayer().getGameAttempts() < game.getPlayer().getNumberOfGames()
-  ) {
-    // check if player wants to play again
-    const playAgain = confirm(
-      "Game Over!\n\nYou scored " +
-        game.getPlayer().getCurrentScore() +
-        ".\n\nKeep Playing?"
-    );
-
-    if (playAgain) {
-      // reset the game to be played again
-      game.reset();
-    } else {
-      // end the games
-      endGamesRun();
-    }
-  } else {
-    // the player has no more games left in the tournament
-    endGamesRun();
+function getHighScores() {
+  try {
+    const scores = JSON.parse(localStorage.getItem(HIGH_SCORES_KEY)) || [];
+    return Array.isArray(scores) ? scores : [];
+  } catch (error) {
+    return [];
   }
+}
+
+function saveHighScore(player, score) {
+  const scores = getHighScores();
+  const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  scores.push({
+    id,
+    name: player.getPlayerName(),
+    score,
+    difficulty: game.getDifficulty(),
+  });
+  scores.sort((a, b) => b.score - a.score);
+  const rank = scores.findIndex((entry) => entry.id === id);
+  try {
+    localStorage.setItem(HIGH_SCORES_KEY, JSON.stringify(scores.slice(0, 10)));
+  } catch (error) {
+    console.log(error)
+  }
+  return { id, rank };
+}
+
+function renderHighScores() {
+  const scores = getHighScores().slice(0, 5);
+
+  for (const list of document.querySelectorAll(".high-score-list")) {
+    list.replaceChildren();
+
+    if (scores.length === 0) {
+      const emptyItem = document.createElement("li");
+      emptyItem.className = "empty-score";
+      emptyItem.textContent = "No scores recorded yet";
+      list.append(emptyItem);
+      continue;
+    }
+
+    scores.forEach((entry, index) => {
+      const item = document.createElement("li");
+      const captain = document.createElement("span");
+      const score = document.createElement("strong");
+      captain.textContent = `${index + 1}. ${entry.name}`;
+      if (entry.id && entry.id === latestHighScoreId) {
+        item.classList.add("latest-high-score");
+      }
+      score.textContent = entry.score;
+      item.append(captain, score);
+      list.append(item);
+    });
+  }
+}
+
+function celebrateTopScore() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const celebration = document.createElement("div");
+  celebration.className = "confetti-celebration";
+  celebration.setAttribute("aria-hidden", "true");
+  const colours = ["#ffbf3d", "#63d7cf", "#e3fffa", "#e86f71", "#3aa6ad"];
+
+  for (let index = 0; index < 70; index += 1) {
+    const piece = document.createElement("i");
+    piece.style.setProperty("--x", `${Math.random() * 100}vw`);
+    piece.style.setProperty("--drift", `${Math.random() * 180 - 90}px`);
+    piece.style.setProperty("--delay", `${Math.random() * 0.7}s`);
+    piece.style.setProperty("--duration", `${1.8 + Math.random() * 1.3}s`);
+    piece.style.setProperty("--colour", colours[index % colours.length]);
+    piece.style.setProperty("--spin", `${Math.random() * 720 + 360}deg`);
+    celebration.append(piece);
+  }
+
+  document.body.append(celebration);
+  window.setTimeout(() => celebration.remove(), 3900);
+}
+
+function startExpedition() {
+  const form = document.getElementById("start-form");
+  const formData = new FormData(form);
+  playerName = String(formData.get("playerName") || "BOB").trim() || "BOB";
+  difficultyLevel = String(formData.get("difficulty") || "NORMAL");
+  createGame();
+  appState = "playing";
+  setScreen("");
+}
+
+function startNewExpedition() {
+  createGame();
+  appState = "playing";
+  setScreen("");
+}
+
+function gameOver() {
+  if (appState !== "playing") return;
+
+  appState = "game-over";
+  const player = game.getPlayer();
+  const finalScore = player.getCurrentScore();
+  const highScoreResult = saveHighScore(player, finalScore);
+  latestHighScoreId = highScoreResult.rank < 5 ? highScoreResult.id : null;
+  renderHighScores();
+
+  document.getElementById("final-score").textContent = finalScore;
+  setScreen("game-over-screen");
+  if (highScoreResult.rank === 0) celebrateTopScore();
+}
+
+function showDialog(isQuitDialog) {
+  if (!game || appState !== "playing") return;
+  pausedFrame = get();
+  game.getSubmarine().setTravelSpeedToZero();
+  game.getSubmarine().setIsBoosting(false);
+  game.setRunGame(false);
+  appState = "dialog";
+  document.getElementById("dialog-title").textContent = isQuitDialog
+    ? "Quit?"
+    : "Controls";
+  document.getElementById("controls-list").hidden = isQuitDialog;
+  document.getElementById("quit-message").hidden = !isQuitDialog;
+  document.getElementById("confirm-quit-button").hidden = !isQuitDialog;
+  document.getElementById("confirm-quit-button").disabled = false;
+  setScreen("dialog-screen");
+}
+
+function closeDialog() {
+  setScreen("");
+  appState = "playing";
+  pausedFrame = null;
+  game.setRunGame(true);
+}
+
+function resumePausedGame() {
+  if (!game || game.getRunGame() || appState !== "playing") return;
+  pausedFrame = null;
+  document.getElementById("pause-resume-button").hidden = true;
+  game.setRunGame(true);
+}
+
+function bindScreenControls() {
+  document.getElementById("start-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    startExpedition();
+  });
+  document
+    .getElementById("restart-button")
+    .addEventListener("click", startNewExpedition);
+  document.getElementById("leave-button").addEventListener("click", () => {
+    appState = "thanks";
+    setScreen("thanks");
+  });
+  document
+    .getElementById("dialog-close-button")
+    .addEventListener("click", closeDialog);
+  document
+    .getElementById("pause-resume-button")
+    .addEventListener("click", resumePausedGame);
+  document
+    .getElementById("confirm-quit-button")
+    .addEventListener("click", (event) => {
+      // Only end the game once, even if the button is clicked repeatedly.
+      if (
+        appState !== "dialog" ||
+        document.getElementById("quit-message").hidden
+      ) {
+        return;
+      }
+      event.currentTarget.disabled = true;
+      appState = "playing";
+      gameOver();
+    });
+  document.getElementById("thanks-play-again").addEventListener("click", () => {
+    appState = "start";
+    latestHighScoreId = null;
+    renderHighScores();
+    setScreen("start-screen");
+  });
 }
 
 // handle key events
 function keyPressed() {
+  if (
+    appState === "dialog" &&
+    (key == "i" || key == "I") &&
+    !document.getElementById("controls-list").hidden
+  ) {
+    closeDialog();
+    return;
+  }
+
+  if (!game || appState !== "playing") return;
+
+  if (key == "p" || key == "P") {
+    if (game.getRunGame()) {
+      pausedFrame = get();
+      game.getSubmarine().setTravelSpeedToZero();
+      game.getSubmarine().setIsBoosting(false);
+      game.setRunGame(false);
+      document.getElementById("pause-resume-button").hidden = false;
+    } else {
+      resumePausedGame();
+    }
+    return;
+  }
+
+  // Do not allow movement or weapons to change state while paused.
+  if (!game.getRunGame()) return;
+
   if (keyCode == UP_ARROW) {
     // move the submarine up
     game.getSubmarine().setTravelSpeed(2.5);
@@ -119,7 +271,7 @@ function keyPressed() {
         game.getAvailableProjectileIndexes(1)[0],
         game.getSubmarine().getXCord(),
         game.getSubmarine().getYCord(),
-        game.getSubmarine().getRotation()
+        game.getSubmarine().getRotation(),
       );
   } else if (key == "s" || key == "S") {
     // activate shield
@@ -134,42 +286,20 @@ function keyPressed() {
           game.getProjectiles(),
           game.getAvailableProjectileIndexes(14),
           game.getSubmarine().getXCord(),
-          game.getSubmarine().getYCord()
+          game.getSubmarine().getYCord(),
         );
     }
     // remove the bomb from submarine inventory
     game.getSubmarine().setHasBomb(false);
-  } else if (key == "p" || key == "P") {
-    // (un)pause the game
-    game.setRunGame(!game.getRunGame());
   } else if (key == "e" || key == "E") {
-    // display option to exit the game
-
-    // pause the game
-    game.setRunGame(false);
-    let exitGame = getConfirmationFromUser("Are you sure you want to quit?");
-    if (exitGame == 0) {
-      exit();
-    } else {
-      // continue the game
-      game.setRunGame(true);
-    }
+    showDialog(true);
   } else if (key == "i" || key == "I") {
-    // display game controls
-    alert(
-      "Controls: \n" +
-        "\u2191 \u2193 = Move Submarine\n" +
-        "\u2192 \u2190 = Rotate Submarine\n" +
-        "[Spacebar] = Shoot Projectile\n" +
-        "[B] = Shoot Bombs\n" +
-        "[S] = Activate Shield\n" +
-        "[P] = Pause Game\n" +
-        "[I] = See Controls"
-    );
+    showDialog(false);
   }
 }
 
 function keyReleased() {
+  if (!game || appState !== "playing") return;
   // stop moving submarine
   if (keyCode == UP_ARROW || keyCode == DOWN_ARROW) {
     if (keyCode == UP_ARROW) {
@@ -179,27 +309,308 @@ function keyReleased() {
   }
 }
 
+let oceanParticles = [];
+let oceanEffectsReady = false;
+
+function initialiseOceanEffects() {
+  oceanParticles = [];
+
+  const particleAmount = 45;
+
+  for (let i = 0; i < particleAmount; i++) {
+    oceanParticles.push(createOceanParticle(true));
+  }
+
+  oceanEffectsReady = true;
+}
+
+function createOceanParticle(randomYPosition = false) {
+  const isBubble = random() < 0.22;
+
+  return {
+    x: random(width),
+    y: randomYPosition ? random(height) : height + random(20, 100),
+
+    size: isBubble ? random(4, 14) : random(1, 4),
+
+    speed: isBubble ? random(0.35, 1.1) : random(0.08, 0.35),
+
+    drift: random(-0.25, 0.25),
+    phase: random(TWO_PI),
+    bubble: isBubble,
+    opacity: isBubble ? random(35, 95) : random(30, 110),
+  };
+}
+
+function drawOceanBackground() {
+  if (!oceanEffectsReady) {
+    initialiseOceanEffects();
+  }
+
+  drawOceanGradient();
+  drawSurfaceGlow();
+  drawLightRays();
+  drawDistantCurrents();
+  updateAndDrawOceanParticles();
+}
+
+function drawOceanGradient() {
+  // Match the dark teal water used by the start and end screens.
+  const topColour = color(7, 56, 74);
+  const middleColour = color(3, 36, 52);
+  const bottomColour = color(1, 13, 24);
+
+  noFill();
+
+  for (let y = 0; y < height; y += 8) {
+    const progress = y / height;
+    let lineColour;
+
+    if (progress < 0.45) {
+      lineColour = lerpColor(topColour, middleColour, progress / 0.45);
+    } else {
+      lineColour = lerpColor(
+        middleColour,
+        bottomColour,
+        (progress - 0.45) / 0.55,
+      );
+    }
+
+    stroke(lineColour);
+    strokeWeight(9);
+    line(0, y, width, y);
+  }
+
+  noStroke();
+}
+
+function drawSurfaceGlow() {
+  const context = drawingContext;
+
+  const glow = context.createLinearGradient(0, 0, 0, height * 0.42);
+
+  glow.addColorStop(0, "rgba(119, 226, 226, 0.14)");
+  glow.addColorStop(0.45, "rgba(29, 180, 178, 0.05)");
+  glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+  context.save();
+  context.fillStyle = glow;
+  context.fillRect(0, 0, width, height * 0.42);
+  context.restore();
+}
+
+function drawLightRays() {
+  push();
+
+  noStroke();
+  blendMode(SCREEN);
+
+  const rayMovement = sin(frameCount * 0.004) * 45;
+
+  for (let i = 0; i < 5; i++) {
+    const startX =
+      (width / 4) * i - width * 0.1 + rayMovement * (i % 2 === 0 ? 1 : -1);
+
+    const rayWidth = width * 0.09;
+
+    fill(119, 226, 226, 8);
+
+    triangle(startX, 0, startX + rayWidth, 0, startX + rayWidth * 3.5, height);
+
+    fill(119, 226, 226, 4);
+
+    triangle(
+      startX + rayWidth * 0.4,
+      0,
+      startX + rayWidth * 1.4,
+      0,
+      startX + rayWidth * 2.5,
+      height,
+    );
+  }
+
+  blendMode(BLEND);
+  pop();
+}
+
+function drawDistantCurrents() {
+  push();
+
+  noFill();
+  strokeWeight(1);
+
+  for (let i = 0; i < 7; i++) {
+    const baseY = height * 0.2 + i * height * 0.12;
+    const movement = frameCount * (0.08 + i * 0.01);
+
+    stroke(114, 201, 202, 8);
+
+    beginShape();
+
+    for (let x = -100; x <= width + 100; x += 35) {
+      const waveY = baseY + sin(x * 0.009 + movement * 0.02 + i) * 14;
+
+      curveVertex(x, waveY);
+    }
+
+    endShape();
+  }
+
+  pop();
+}
+
+function updateAndDrawOceanParticles() {
+  push();
+
+  for (let particle of oceanParticles) {
+    particle.y -= particle.speed;
+
+    particle.x +=
+      particle.drift + sin(frameCount * 0.015 + particle.phase) * 0.12;
+
+    // Recycle particles after they reach the top
+    if (
+      particle.y < -particle.size - 10 ||
+      particle.x < -30 ||
+      particle.x > width + 30
+    ) {
+      const replacement = createOceanParticle(false);
+
+      particle.x = replacement.x;
+      particle.y = replacement.y;
+      particle.size = replacement.size;
+      particle.speed = replacement.speed;
+      particle.drift = replacement.drift;
+      particle.phase = replacement.phase;
+      particle.bubble = replacement.bubble;
+      particle.opacity = replacement.opacity;
+    }
+
+    if (particle.bubble) {
+      // Bubble outline
+      noFill();
+      stroke(169, 237, 236, particle.opacity);
+      strokeWeight(1.2);
+
+      circle(particle.x, particle.y, particle.size);
+
+      // Bubble highlight
+      noStroke();
+      fill(216, 251, 246, particle.opacity * 0.85);
+
+      circle(
+        particle.x - particle.size * 0.18,
+        particle.y - particle.size * 0.18,
+        Math.max(1.2, particle.size * 0.16),
+      );
+    } else {
+      // Marine snow
+      noStroke();
+      fill(114, 201, 202, particle.opacity);
+
+      circle(particle.x, particle.y, particle.size);
+    }
+  }
+
+  pop();
+}
+
+function drawOceanForeground() {
+  drawDepthFog();
+  drawVignette();
+}
+
+function drawDepthFog() {
+  const context = drawingContext;
+
+  const fog = context.createLinearGradient(0, height * 0.58, 0, height);
+
+  fog.addColorStop(0, "rgba(1, 13, 24, 0)");
+  fog.addColorStop(1, "rgba(0, 7, 14, 0.3)");
+
+  context.save();
+  context.fillStyle = fog;
+  context.fillRect(0, height * 0.58, width, height * 0.42);
+  context.restore();
+}
+
+function drawVignette() {
+  const context = drawingContext;
+
+  const vignette = context.createRadialGradient(
+    width / 2,
+    height / 2,
+    Math.min(width, height) * 0.2,
+    width / 2,
+    height / 2,
+    Math.max(width, height) * 0.72,
+  );
+
+  vignette.addColorStop(0, "rgba(0, 0, 0, 0)");
+  vignette.addColorStop(0.65, "rgba(0, 10, 17, 0.04)");
+  vignette.addColorStop(1, "rgba(0, 6, 12, 0.42)");
+
+  context.save();
+  context.fillStyle = vignette;
+  context.fillRect(0, 0, width, height);
+  context.restore();
+}
+
 function draw() {
-  // run the game if user has not paused it
+  if (appState === "dialog" && pausedFrame) {
+    image(pausedFrame, 0, 0, width, height);
+    return;
+  }
+
+  if (!game || appState !== "playing") {
+    drawOceanBackground();
+    return;
+  }
+
   if (game.getRunGame()) {
-    // if the player has run out of lives end the game
     if (game.getSubmarine().getLives() <= 0) {
-      // increase number of games played
-      game.getPlayer().increaseGameAttempts();
       gameOver();
     } else {
-      background(24, 44, 97);
+      drawOceanBackground();
       game.run();
+      drawOceanForeground();
     }
   } else {
-    // display a pause screen
-    fill(0);
+    if (pausedFrame) {
+      image(pausedFrame, 0, 0, width, height);
+    }
+
+    push();
+
+    noStroke();
+    fill(1, 13, 24, 135);
     rect(0, 0, width, height);
-    fill(255);
-    textFont(wordFont, 80);
-    textAlign(CENTER);
-    text("PAUSED", width / 2 - 40, height / 2 - 50, 80);
-    textSize(20);
-    text("Press p to continue", width / 2 - 190, height / 2 + 20, 380);
+
+    const panelWidth = Math.min(520, width - 40);
+    const panelHeight = 215;
+    const panelX = width / 2 - panelWidth / 2;
+    const panelY = height / 2 - panelHeight / 2;
+
+    drawingContext.shadowBlur = 28;
+    drawingContext.shadowColor = "rgba(58, 166, 173, 0.35)";
+
+    fill(2, 21, 33, 225);
+    stroke(58, 166, 173, 210);
+    strokeWeight(2);
+    rect(panelX, panelY, panelWidth, panelHeight, 18);
+
+    drawingContext.shadowBlur = 22;
+    drawingContext.shadowColor = "rgba(104, 214, 219, 0.55)";
+
+    noStroke();
+    fill(227, 255, 250);
+    textFont(wordFont);
+    textAlign(CENTER, CENTER);
+    textSize(Math.min(54, width * 0.1));
+    text("PAUSED", width / 2, height / 2 - 25);
+
+    drawingContext.shadowBlur = 0;
+
+    pop();
   }
 }
