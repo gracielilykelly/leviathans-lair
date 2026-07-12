@@ -23,10 +23,6 @@
 
 > **Desktop only:** Leviathan's Lair uses keyboard controls and is best played on a desktop or laptop.
 
-## Gameplay Preview
-
-https://github.com/user-attachments/assets/7b7c919c-2f31-4353-8897-918b6d95ac3b
-
 ## Description
 
 Leviathan's Lair is an underwater asteroids like game where you pilot a submarine and face off against deep-sea creatures, including a showdown with the legendary Leviathan. Navigate your way through treacherous waters, shooting at boulders to gain valuable pickups like shields, bombs and hearts, and strive to survive while aiming to get a high score.
@@ -42,16 +38,16 @@ Leviathan's Lair is an underwater asteroids like game where you pilot a submarin
 
 ## Game Controls
 
-| Key | Action |
-| --- | --- |
+| Key                         | Action                 |
+| --------------------------- | ---------------------- |
 | <kbd>↑</kbd> / <kbd>↓</kbd> | Move forward / reverse |
-| <kbd>←</kbd> / <kbd>→</kbd> | Rotate the submarine |
-| <kbd>Space</kbd> | Fire a projectile |
-| <kbd>B</kbd> | Deploy a bomb |
-| <kbd>S</kbd> | Activate the shield |
-| <kbd>P</kbd> | Pause the game |
-| <kbd>I</kbd> | View the controls |
-| <kbd>Q</kbd> | End the game |
+| <kbd>←</kbd> / <kbd>→</kbd> | Rotate the submarine   |
+| <kbd>Space</kbd>            | Fire a projectile      |
+| <kbd>B</kbd>                | Deploy a bomb          |
+| <kbd>S</kbd>                | Activate the shield    |
+| <kbd>P</kbd>                | Pause the game         |
+| <kbd>I</kbd>                | View the controls      |
+| <kbd>Q</kbd>                | End the game           |
 
 ## Built With
 
