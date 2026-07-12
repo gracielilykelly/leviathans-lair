@@ -5,8 +5,8 @@ let playerName;
 let difficultyLevel;
 let appState = "start";
 let pausedFrame = null;
-const HIGH_SCORES_KEY = "leviathansLairHighScores";
 let latestHighScoreId = null;
+let scoreboardClient = null;
 
 function preload() {
   iconFont = loadFont("fonts/fa-solid.ttf");
@@ -23,7 +23,7 @@ function setup() {
   canvas.parent("game");
   textFont(wordFont);
   bindScreenControls();
-  renderHighScores();
+  void renderHighScores();
 }
 
 function windowResized() {
@@ -38,36 +38,86 @@ function setScreen(id) {
   }
 }
 
-function getHighScores() {
-  try {
-    const scores = JSON.parse(localStorage.getItem(HIGH_SCORES_KEY)) || [];
-    return Array.isArray(scores) ? scores : [];
-  } catch (error) {
-    return [];
-  }
+function getScoreboardDifficulty() {
+  const selectedDifficulty = document.querySelector(
+    'input[name="difficulty"]:checked',
+  );
+  return selectedDifficulty?.value || difficultyLevel || "NORMAL";
 }
 
-function saveHighScore(player, score) {
-  const scores = getHighScores();
-  const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  scores.push({
-    id,
+function getScoreboardClient() {
+  if (scoreboardClient) return scoreboardClient;
+
+  const config = window.SUPABASE_CONFIG;
+  if (!config?.url || !config?.publishableKey || !window.supabase) return null;
+
+  scoreboardClient = window.supabase.createClient(
+    config.url,
+    config.publishableKey,
+    {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      },
+    },
+  );
+  return scoreboardClient;
+}
+
+async function loadSharedHighScores() {
+  const client = getScoreboardClient();
+  const difficulty = getScoreboardDifficulty();
+  if (!client) throw new Error("Supabase scoreboard is not configured");
+
+  const { data, error } = await client
+    .from("high_scores")
+    .select("id,name,score,difficulty,created_at")
+    .eq("difficulty", difficulty)
+    .order("score", { ascending: false })
+    .order("created_at", { ascending: true })
+    .limit(5);
+
+  if (error) throw error;
+  return data.map((entry) => ({ ...entry, score: Number(entry.score) }));
+}
+
+async function saveHighScore(player, score) {
+  const entry = {
     name: player.getPlayerName(),
     score,
     difficulty: game.getDifficulty(),
-  });
-  scores.sort((a, b) => b.score - a.score);
-  const rank = scores.findIndex((entry) => entry.id === id);
-  try {
-    localStorage.setItem(HIGH_SCORES_KEY, JSON.stringify(scores.slice(0, 10)));
-  } catch (error) {
-    console.log(error)
-  }
-  return { id, rank };
+  };
+  const client = getScoreboardClient();
+  if (!client) throw new Error("Supabase scoreboard is not configured");
+
+  const { data, error } = await client
+    .from("high_scores")
+    .insert(entry)
+    .select("id")
+    .single();
+  if (error) throw error;
+
+  const scores = await loadSharedHighScores();
+  return {
+    id: data.id,
+    rank: scores.findIndex((savedScore) => savedScore.id === data.id),
+    scores,
+  };
 }
 
-function renderHighScores() {
-  const scores = getHighScores().slice(0, 5);
+async function renderHighScores(providedScores) {
+  let scores = providedScores;
+  let unavailable = false;
+  if (!scores) {
+    try {
+      scores = await loadSharedHighScores();
+    } catch (error) {
+      console.warn("Shared scoreboard unavailable", error);
+      scores = [];
+      unavailable = true;
+    }
+  }
 
   for (const list of document.querySelectorAll(".high-score-list")) {
     list.replaceChildren();
@@ -75,7 +125,9 @@ function renderHighScores() {
     if (scores.length === 0) {
       const emptyItem = document.createElement("li");
       emptyItem.className = "empty-score";
-      emptyItem.textContent = "No scores recorded yet";
+      emptyItem.textContent = unavailable
+        ? "Scores temporarily unavailable"
+        : "No scores recorded yet";
       list.append(emptyItem);
       continue;
     }
@@ -134,19 +186,25 @@ function startNewExpedition() {
   setScreen("");
 }
 
-function gameOver() {
+async function gameOver() {
   if (appState !== "playing") return;
 
   appState = "game-over";
   const player = game.getPlayer();
   const finalScore = player.getCurrentScore();
-  const highScoreResult = saveHighScore(player, finalScore);
-  latestHighScoreId = highScoreResult.rank < 5 ? highScoreResult.id : null;
-  renderHighScores();
-
   document.getElementById("final-score").textContent = finalScore;
   setScreen("game-over-screen");
-  if (highScoreResult.rank === 0) celebrateTopScore();
+
+  try {
+    const highScoreResult = await saveHighScore(player, finalScore);
+    latestHighScoreId = highScoreResult.rank >= 0 ? highScoreResult.id : null;
+    await renderHighScores(highScoreResult.scores);
+    if (highScoreResult.rank === 0) celebrateTopScore();
+  } catch (error) {
+    latestHighScoreId = null;
+    console.warn("Could not save score", error);
+    await renderHighScores();
+  }
 }
 
 function showDialog(isQuitDialog) {
@@ -188,9 +246,18 @@ function bindScreenControls() {
   document
     .getElementById("restart-button")
     .addEventListener("click", startNewExpedition);
+  for (const difficultyOption of document.querySelectorAll(
+    'input[name="difficulty"]',
+  )) {
+    difficultyOption.addEventListener("change", () => {
+      latestHighScoreId = null;
+      void renderHighScores();
+    });
+  }
   document.getElementById("leave-button").addEventListener("click", () => {
     appState = "thanks";
     setScreen("thanks");
+    void renderHighScores();
   });
   document
     .getElementById("dialog-close-button")
@@ -210,12 +277,12 @@ function bindScreenControls() {
       }
       event.currentTarget.disabled = true;
       appState = "playing";
-      gameOver();
+      void gameOver();
     });
   document.getElementById("thanks-play-again").addEventListener("click", () => {
     appState = "start";
     latestHighScoreId = null;
-    renderHighScores();
+    void renderHighScores();
     setScreen("start-screen");
   });
 }
@@ -569,7 +636,7 @@ function draw() {
 
   if (game.getRunGame()) {
     if (game.getSubmarine().getLives() <= 0) {
-      gameOver();
+      void gameOver();
     } else {
       drawOceanBackground();
       game.run();
