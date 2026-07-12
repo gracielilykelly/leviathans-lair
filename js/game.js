@@ -18,6 +18,8 @@ class Game {
     this.projectiles = [];
     this.pickups = [];
     this.enemies = [];
+    this.lastReplacementType = null;
+    this.enemySpawnHistory = new Map();
     this.numberOfBoulders = 0;
     this.numberOfEnemies = 0;
     this.pickupDropPercentage;
@@ -254,12 +256,28 @@ class Game {
               this.setBossDefeated(true);
               this.setBossAdded(false);
             } else {
-              this.enemies[k] = new Enemy(
-                this.enemiesToInclude[
-                  floor(random(0, this.enemiesToInclude.length))
-                ],
+              const replacementTypes = this.enemiesToInclude.filter(
+                (type) =>
+                  type !== enemy.getType() &&
+                  type !== this.lastReplacementType,
               );
-              this.enemies[k].getAsset().setSpawnLocation();
+              const availableTypes = replacementTypes.length
+                ? replacementTypes
+                : this.enemiesToInclude.filter(
+                    (type) => type !== enemy.getType(),
+                  );
+              const replacementType =
+                availableTypes[floor(random(0, availableTypes.length))];
+              const replacement = new Enemy(replacementType);
+              replacement.getAsset().setSpawnLocation(
+                this.enemySpawnHistory.get(replacementType),
+              );
+              this.enemySpawnHistory.set(replacementType, {
+                x: replacement.getAsset().getXCord(),
+                y: replacement.getAsset().getYCord(),
+              });
+              this.lastReplacementType = replacementType;
+              this.enemies[k] = replacement;
             }
           }
 

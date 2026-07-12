@@ -72,27 +72,38 @@ class Asset {
     }
   }
 
-  setSpawnLocation() {
-    /* Sets the cordinates of the asset off
-     screen at random.
-     */
+  setSpawnLocation(previousLocation = null) {
+    const horizontalInset = this.size / 2;
+    const topInset = height / 15 + this.size / 2;
+    const bottomInset = height - this.size / 2;
+    const minimumDistance = Math.min(width, height) * 0.35;
 
-    // randomly choose a spawn location
-    const spawnTop = floor(random(0, 2)) > 0;
-    const spawnLeft = floor(random(0, 2)) > 0;
+    for (let attempt = 0; attempt < 12; attempt++) {
+      const edge = floor(random(0, 4));
 
-    //spawn the asset top/bottom offscreen
-    if (spawnTop) {
-      this.setYCord(-this.size);
-    } else {
-      this.setYCord(height + this.size);
-    }
+      if (edge === 0) {
+        this.setXCord(random(horizontalInset, width - horizontalInset));
+        this.setYCord(-this.size);
+      } else if (edge === 1) {
+        this.setXCord(width + this.size);
+        this.setYCord(random(topInset, bottomInset));
+      } else if (edge === 2) {
+        this.setXCord(random(horizontalInset, width - horizontalInset));
+        this.setYCord(height + this.size);
+      } else {
+        this.setXCord(-this.size);
+        this.setYCord(random(topInset, bottomInset));
+      }
 
-    // spawn the asset left/right offscreen
-    if (spawnLeft) {
-      this.setXCord(-this.size);
-    } else {
-      this.setXCord(width + this.size);
+      if (
+        !previousLocation ||
+        Math.hypot(
+          this.xCord - previousLocation.x,
+          this.yCord - previousLocation.y,
+        ) >= minimumDistance
+      ) {
+        return;
+      }
     }
   }
 
