@@ -146,23 +146,6 @@ body {
     inset: 0;
 }
 
-#pause-resume-button {
-    position: fixed;
-    z-index: 900;
-    top: calc(50% + 52px);
-    left: 50%;
-    min-width: 190px;
-    transform: translateX(-50%);
-}
-
-#pause-resume-button:hover {
-    transform: translate(-50%, -2px);
-}
-
-#pause-resume-button:active {
-    transform: translateX(-50%);
-}
-
 .state-screen {
     position: fixed;
     inset: 0;

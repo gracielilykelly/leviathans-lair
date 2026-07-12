@@ -20,7 +20,15 @@
 <body>
     <div id="p5_loading"></div>
     <div id="game"></div>
-    <button id="pause-resume-button" type="button" class="game-button primary-button" hidden>Resume Game</button>
+
+    <section id="pause-screen" class="state-screen dialog-screen" hidden aria-labelledby="pause-title">
+        <div class="state-panel dialog-panel">
+            <h1 id="pause-title">Game Paused</h1>
+            <div class="button-container">
+                <button id="pause-resume-button" type="button" class="game-button primary-button">Resume</button>
+            </div>
+        </div>
+    </section>
 
     <section id="start-screen" class="state-screen" aria-labelledby="start-title">
         <div class="sonar-ring sonar-ring-one"></div>
@@ -79,7 +87,7 @@
                 <li><kbd>B</kbd><span>Shoot bombs</span></li>
                 <li><kbd>S</kbd><span>Activate shield</span></li>
                 <li><kbd>P</kbd><span>Pause</span></li>
-                <li><kbd>E</kbd><span>End Game</span></li>
+                <li><kbd>Q</kbd><span>End Game</span></li>
             </ul>
             <p id="quit-message" class="screen-copy" hidden>Are you sure you want to quit the game?</p>
             <div class="button-container">
@@ -106,7 +114,7 @@
             <h2 class="scores-title">High Scores</h2>
             <ul id="thanks-high-scores" class="high-score-list"></ul>
 
-            <p class="screen-copy">The depths await your return</p>
+            <p class="screen-copy">The depths await your return...</p>
             <div class="button-container state-actions">
                 <button id="thanks-play-again" type="button" class="game-button primary-button">
                     Play Again

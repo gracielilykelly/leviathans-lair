@@ -289,7 +289,7 @@ function closeDialog() {
 function resumePausedGame() {
   if (!game || game.getRunGame() || appState !== "playing") return;
   pausedFrame = null;
-  document.getElementById("pause-resume-button").hidden = true;
+  setScreen("");
   game.setRunGame(true);
 }
 
@@ -352,7 +352,7 @@ function keyPressed() {
       game.getSubmarine().setTravelSpeedToZero();
       game.getSubmarine().setIsBoosting(false);
       game.setRunGame(false);
-      document.getElementById("pause-resume-button").hidden = false;
+      setScreen("pause-screen");
     } else {
       resumePausedGame();
     }
@@ -404,7 +404,7 @@ function keyPressed() {
     }
     // remove the bomb from submarine inventory
     game.getSubmarine().setHasBomb(false);
-  } else if (key == "e" || key == "E") {
+  } else if (key == "q" || key == "Q") {
     showDialog(true);
   } else if (key == "i" || key == "I") {
     showDialog(false);
@@ -692,38 +692,5 @@ function draw() {
     if (pausedFrame) {
       image(pausedFrame, 0, 0, width, height);
     }
-
-    push();
-
-    noStroke();
-    fill(1, 13, 24, 135);
-    rect(0, 0, width, height);
-
-    const panelWidth = Math.min(520, width - 40);
-    const panelHeight = 215;
-    const panelX = width / 2 - panelWidth / 2;
-    const panelY = height / 2 - panelHeight / 2;
-
-    drawingContext.shadowBlur = 28;
-    drawingContext.shadowColor = "rgba(58, 166, 173, 0.35)";
-
-    fill(2, 21, 33, 225);
-    stroke(58, 166, 173, 210);
-    strokeWeight(2);
-    rect(panelX, panelY, panelWidth, panelHeight, 18);
-
-    drawingContext.shadowBlur = 22;
-    drawingContext.shadowColor = "rgba(104, 214, 219, 0.55)";
-
-    noStroke();
-    fill(227, 255, 250);
-    textFont(wordFont);
-    textAlign(CENTER, CENTER);
-    textSize(Math.min(54, width * 0.1));
-    text("PAUSED", width / 2, height / 2 - 25);
-
-    drawingContext.shadowBlur = 0;
-
-    pop();
   }
 }
