@@ -99,9 +99,17 @@ async function saveHighScore(player, score) {
   if (error) throw error;
 
   const scores = await loadSharedHighScores();
+  const savedScore = scores.find((entry) => entry.id === data.id);
+  const placement = savedScore
+    ? new Set(
+        scores
+          .filter((entry) => entry.score > savedScore.score)
+          .map((entry) => entry.score),
+      ).size + 1
+    : null;
   return {
     id: data.id,
-    rank: scores.findIndex((savedScore) => savedScore.id === data.id),
+    placement,
     scores,
   };
 }
@@ -133,11 +141,17 @@ async function renderHighScores(providedScores) {
       continue;
     }
 
-    scores.forEach((entry, index) => {
+    let placement = 0;
+    let previousScore = null;
+
+    scores.forEach((entry) => {
+      if (entry.score !== previousScore) placement += 1;
+      previousScore = entry.score;
+
       const item = document.createElement("li");
       const captain = document.createElement("span");
       const score = document.createElement("strong");
-      captain.textContent = `${index + 1}. ${entry.name}`;
+      captain.textContent = `${placement}. ${entry.name}`;
       if (entry.id && entry.id === latestHighScoreId) {
         item.classList.add("latest-high-score");
       }
@@ -208,9 +222,11 @@ async function gameOver() {
 
   try {
     const highScoreResult = await saveHighScore(player, finalScore);
-    latestHighScoreId = highScoreResult.rank >= 0 ? highScoreResult.id : null;
+    latestHighScoreId = highScoreResult.placement
+      ? highScoreResult.id
+      : null;
     await renderHighScores(highScoreResult.scores);
-    if (highScoreResult.rank === 0) celebrateTopScore();
+    if (highScoreResult.placement === 1) celebrateTopScore();
   } catch (error) {
     latestHighScoreId = null;
     console.warn("Could not save score", error);
