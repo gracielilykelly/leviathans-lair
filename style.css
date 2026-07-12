@@ -229,6 +229,7 @@ body {
 
 .start-panel .difficulty-group {
     gap: 9px;
+    margin-top: 8px;
 }
 
 .start-panel .difficulty-options {
@@ -237,6 +238,7 @@ body {
 
 .start-panel .game-button {
     padding-block: 12px;
+    margin-top: 12px;
 }
 
 .start-panel .panel-divider {
