@@ -18,6 +18,7 @@ class Game {
     this.projectiles = [];
     this.pickups = [];
     this.enemies = [];
+    this.lastPickupType = null;
     this.lastReplacementType = null;
     this.enemySpawnHistory = new Map();
     this.numberOfBoulders = 0;
@@ -51,17 +52,17 @@ class Game {
       this.setPickupsToInclude(PICKUP_CHOICES);
       this.setPickupDropPercentage(100);
     } else if (difficultyLevel === "NORMAL") {
-      this.setNumberOfBoulders(10);
-      this.setNumberOfEnemies(10);
+      this.setNumberOfBoulders(15);
+      this.setNumberOfEnemies(15);
       this.setEnemiesToInclude(ENEMY_CHOICES);
       this.setPickupsToInclude(PICKUP_CHOICES);
-      this.setPickupDropPercentage(50);
+      this.setPickupDropPercentage(70);
     } else if (difficultyLevel === "HARDCORE") {
-      this.setNumberOfBoulders(15);
+      this.setNumberOfBoulders(20);
       this.setNumberOfEnemies(25);
       this.setEnemiesToInclude(ENEMY_CHOICES);
-      this.setPickupsToInclude(subset(PICKUP_CHOICES, 2, 1));
-      this.setPickupDropPercentage(10);
+      this.setPickupsToInclude(PICKUP_CHOICES);
+      this.setPickupDropPercentage(20);
     }
   }
 
@@ -165,6 +166,18 @@ class Game {
     this.bossDefeated = bossIsDefeated;
   }
 
+  getNextPickupType() {
+    const availableTypes = this.pickupsToInclude.filter(
+      (type) => type !== this.lastPickupType,
+    );
+    const choices = availableTypes.length
+      ? availableTypes
+      : this.pickupsToInclude;
+    const pickupType = choices[floor(random(choices.length))];
+    this.lastPickupType = pickupType;
+    return pickupType;
+  }
+
   // methods
   addBoulder(index) {
     /* Add boulder to list of boulders at certain index
@@ -213,9 +226,7 @@ class Game {
           this.pickups[j] = new Pickup(
             this.boulders[j].getAsset().getXCord(),
             this.boulders[j].getAsset().getYCord(),
-            this.pickupsToInclude[
-              floor(random(0, this.pickupsToInclude.length))
-            ],
+            this.getNextPickupType(),
           );
 
           //calculate drop rate for pickup and dsiplay it

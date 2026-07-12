@@ -81,6 +81,7 @@ async function loadSharedHighScores(
   difficulty = getScoreboardDifficulty(),
   forceRefresh = false,
 ) {
+  difficulty = String(difficulty).toUpperCase();
   const client = getScoreboardClient();
   if (!client) throw new Error("Supabase scoreboard is not configured");
   if (!forceRefresh && highScoreRequests.has(difficulty)) {
@@ -91,7 +92,7 @@ async function loadSharedHighScores(
     const { data, error } = await client
       .from("high_scores")
       .select("id,name,score,difficulty,created_at")
-      .eq("difficulty", difficulty)
+      .ilike("difficulty", difficulty)
       .order("score", { ascending: false })
       .order("created_at", { ascending: true })
       .limit(5);
