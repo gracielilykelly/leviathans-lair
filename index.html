@@ -39,9 +39,27 @@
                 <div class="difficulty-group">
                     <span class="form-label">Difficulty</span>
                     <div class="difficulty-options">
-                        <label><input type="radio" name="difficulty" value="NOVICE"> Novice</label>
-                        <label><input type="radio" name="difficulty" value="NORMAL" checked> Normal</label>
-                        <label><input type="radio" name="difficulty" value="EXPERT"> Expert</label>
+                        <label class="difficulty-option">
+                            <input type="radio" name="difficulty" value="EASY">
+                            <span class="difficulty-card-content">
+                                <strong>Easy</strong>
+                                <small>Fewer enemies<br>More pickups</small>
+                            </span>
+                        </label>
+                        <label class="difficulty-option">
+                            <input type="radio" name="difficulty" value="NORMAL" checked>
+                            <span class="difficulty-card-content">
+                                <strong>Normal</strong>
+                                <small>Balanced enemies<br>and pickups</small>
+                            </span>
+                        </label>
+                        <label class="difficulty-option">
+                            <input type="radio" name="difficulty" value="HARDCORE">
+                            <span class="difficulty-card-content">
+                                <strong>Hardcore</strong>
+                                <small>Lots of enemies<br>Fewer pickups</small>
+                            </span>
+                        </label>
                     </div>
                 </div>
 

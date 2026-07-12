@@ -1,6 +1,6 @@
 const ENEMY_CHOICES = ["JELLYFISH", "PIRANHA", "PUFFERFISH", "SHARK"];
 const PICKUP_CHOICES = ["HEART", "BOMB", "DIAMOND", "SHIELD"];
-const DIFFICULTY_LEVELS = ["NOVICE", "NORMAL", "EXPERT"];
+const DIFFICULTY_LEVELS = ["EASY", "NORMAL", "HARDCORE"];
 
 class Game {
   constructor(chosenDifficulty, playerName) {
@@ -42,7 +42,7 @@ class Game {
     // creates game based on a chosen difficulty
 
     // depending on the difficulty set certain attributes
-    if (difficultyLevel === "NOVICE") {
+    if (difficultyLevel === "EASY") {
       this.setNumberOfBoulders(5);
       this.setNumberOfEnemies(3);
       this.setEnemiesToInclude(subset(ENEMY_CHOICES, 2, 1));
@@ -54,7 +54,7 @@ class Game {
       this.setEnemiesToInclude(ENEMY_CHOICES);
       this.setPickupsToInclude(PICKUP_CHOICES);
       this.setPickupDropPercentage(50);
-    } else if (difficultyLevel === "EXPERT") {
+    } else if (difficultyLevel === "HARDCORE") {
       this.setNumberOfBoulders(15);
       this.setNumberOfEnemies(25);
       this.setEnemiesToInclude(ENEMY_CHOICES);
@@ -169,7 +169,7 @@ class Game {
      params:
      index (int) - where in boulders array to add boulder
      */
-    if (this.difficulty == "EXPERT") {
+    if (this.difficulty == "HARDCORE") {
       // create fast and small boulders
       this.boulders[index] = new Boulder(10);
     } else {
@@ -356,10 +356,10 @@ class Game {
         }
       }
 
-      // add leviathan enemy if score reaches 1000 and is difficulty other than novice
+      // add leviathan enemy if score reaches 1000 and is difficulty other than easy
       if (
         this.player.getCurrentScore() >= 1000 &&
-        this.difficulty !== "NOVICE" &&
+        this.difficulty !== "EASY" &&
         !this.bossAdded &&
         !this.bossDefeated
       ) {

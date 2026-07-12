@@ -233,7 +233,7 @@ body {
 }
 
 .start-panel .difficulty-options {
-    padding: 11px 12px;
+    padding: 0;
 }
 
 .start-panel .game-button {
@@ -316,15 +316,73 @@ body {
 }
 
 .difficulty-options {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    padding: 12px;
-    color: #c7e9e8;
-    background: #041c29;
-    border: 1px solid #3aa6ad;
-    border-radius: 6px;
-    font-size: 0.7rem;
+}
+
+.difficulty-option {
+    position: relative;
+    cursor: pointer;
+}
+
+.difficulty-option input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.difficulty-card-content {
+    display: grid;
+    align-content: center;
+    gap: 8px;
+    min-height: 76px;
+    padding: 10px 8px;
+    box-sizing: border-box;
+    text-align: center;
+    color: #9ccfd2;
+    background: rgba(4, 28, 41, 0.85);
+    border: 1px solid rgba(58, 166, 173, 0.45);
+    border-radius: 7px;
+    transition:
+        transform 160ms ease,
+        color 160ms ease,
+        background-color 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.difficulty-card-content strong {
+    color: #d8fbf6;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+}
+
+.difficulty-card-content small {
+    font-size: 0.48rem;
+    line-height: 1.55;
+}
+
+.difficulty-option:hover .difficulty-card-content {
+    transform: translateY(-2px);
+    border-color: #68d6db;
+}
+
+.difficulty-option input:checked + .difficulty-card-content {
+    color: #c8f3ef;
+    background: rgba(15, 91, 99, 0.72);
+    border-color: #73e2d6;
+    box-shadow: 0 0 16px rgba(99, 215, 207, 0.2), inset 0 0 18px rgba(99, 215, 207, 0.08);
+}
+
+.difficulty-option input:checked + .difficulty-card-content strong {
+    color: #ffbf3d;
+}
+
+.difficulty-option input:focus-visible + .difficulty-card-content {
+    outline: 2px solid #e3fffa;
+    outline-offset: 3px;
 }
 
 .primary-button {
@@ -527,7 +585,7 @@ kbd {
     }
 
     .difficulty-options {
-        flex-direction: column;
+        grid-template-columns: 1fr;
     }
 }
 
