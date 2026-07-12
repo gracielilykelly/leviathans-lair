@@ -258,8 +258,7 @@ class Game {
             } else {
               const replacementTypes = this.enemiesToInclude.filter(
                 (type) =>
-                  type !== enemy.getType() &&
-                  type !== this.lastReplacementType,
+                  type !== enemy.getType() && type !== this.lastReplacementType,
               );
               const availableTypes = replacementTypes.length
                 ? replacementTypes
@@ -269,9 +268,9 @@ class Game {
               const replacementType =
                 availableTypes[floor(random(0, availableTypes.length))];
               const replacement = new Enemy(replacementType);
-              replacement.getAsset().setSpawnLocation(
-                this.enemySpawnHistory.get(replacementType),
-              );
+              replacement
+                .getAsset()
+                .setSpawnLocation(this.enemySpawnHistory.get(replacementType));
               this.enemySpawnHistory.set(replacementType, {
                 x: replacement.getAsset().getXCord(),
                 y: replacement.getAsset().getYCord(),
@@ -465,7 +464,6 @@ class Scoreboard {
     rect(this.widthDim - 335, 15, 218, 60, 5);
     rect(this.widthDim - 108, 15, 90, 60, 5);
   }
-
 
   drawHullSection(submarine) {
     const x = 32;

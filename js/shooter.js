@@ -36,23 +36,29 @@ class Shooter {
     // load and shoot multiple projectiles
     if (this.allowFire) {
       let a = 0;
+      const volleyPhase = frameCount * 0.045;
 
       for (let i = 0; i < indexes.length; i++) {
         if (this.weaponType === "BOLT") {
           a = 15 * i;
         } else if (this.weaponType === "FIRE") {
-          xCord = 200;
-          yCord = 270 + 30 * (i + 1);
+          const spreadPosition =
+            indexes.length > 1 ? i / (indexes.length - 1) - 0.5 : 0;
+          a = spreadPosition * 1.35 + sin(volleyPhase + i * 0.7) * 0.1;
         } else if (this.weaponType == "BOMB") {
           a = 15 * (i + 1);
         }
         // shoot missiles in direction chosen
         projectiles[indexes[i]] = new Projectile();
         projectiles[indexes[i]].asEnemyAndBombProjectile(
-          xCord,
-          yCord,
+          this.weaponType === "FIRE" ? xCord + 138 : xCord,
+          this.weaponType === "FIRE"
+            ? yCord + sin(volleyPhase + i * 1.4) * 9
+            : yCord,
           a,
-          this.weaponType
+          this.weaponType,
+          i,
+          indexes.length,
         );
         projectiles[indexes[i]].toggleIsFired();
       }
@@ -72,6 +78,10 @@ class Projectile {
     this.alive = true;
     this.isEnemy = false;
     this.weaponType = "";
+    this.age = 0;
+    this.waveAmplitude = 0;
+    this.waveFrequency = 0;
+    this.wavePhase = 0;
   }
 
   asSubmarineBullet(x, y, dir) {
@@ -90,7 +100,7 @@ class Projectile {
   }
 
   // enemy and bomb projectile
-  asEnemyAndBombProjectile(x, y, dir, weapon) {
+  asEnemyAndBombProjectile(x, y, dir, weapon, patternIndex = 0, total = 1) {
     this.xCord = x;
     this.yCord = y;
     this.direction = dir;
@@ -98,6 +108,12 @@ class Projectile {
     this.fired = false;
     this.alive = true;
     this.weaponType = weapon;
+    if (weapon === "FIRE") {
+      this.travelSpeed = random(2.4, 3.6);
+      this.waveAmplitude = random(0.6, 1.5);
+      this.waveFrequency = random(0.09, 0.16);
+      this.wavePhase = (patternIndex / Math.max(1, total)) * TWO_PI;
+    }
     this.setIsEnemy(weapon);
     this.setProjectileSize(weapon);
   }
@@ -199,8 +215,18 @@ class Projectile {
       this.toggleAlive();
     } else {
       // update cordinates based on direction
-      this.xCord += cos(this.direction) * this.travelSpeed;
-      this.yCord += sin(this.direction) * this.travelSpeed;
+      this.age += 1;
+      const wave =
+        this.weaponType === "FIRE"
+          ? sin(this.age * this.waveFrequency + this.wavePhase) *
+            this.waveAmplitude
+          : 0;
+      this.xCord +=
+        cos(this.direction) * this.travelSpeed +
+        cos(this.direction + HALF_PI) * wave;
+      this.yCord +=
+        sin(this.direction) * this.travelSpeed +
+        sin(this.direction + HALF_PI) * wave;
     }
   }
 
@@ -268,21 +294,25 @@ class Projectile {
   }
 
   drawFireball() {
-    const x = this.xCord;
-    const y = this.yCord;
+    const flicker = sin(this.age * 0.7 + this.wavePhase) * 2;
+
+    push();
+    translate(this.xCord, this.yCord);
 
     noStroke();
 
     fill(255, 55, 10, 55);
-    circle(x, y, this.size + 12);
+    circle(0, 0, this.size + 12 + flicker);
 
     fill(255, 75, 10);
-    circle(x, y, this.size);
+    circle(0, 0, this.size);
 
     fill(255, 180, 30);
-    circle(x + 2, y, this.size * 0.62);
+    circle(2, 0, this.size * 0.62);
 
     fill(255, 245, 170);
-    circle(x + 3, y, this.size * 0.25);
+    circle(4, 0, this.size * 0.25);
+
+    pop();
   }
 }
