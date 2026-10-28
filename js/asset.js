@@ -708,6 +708,12 @@ class Enemy {
   }
 
   // methods
+  setReplacementSpawnLocation(previousLocation, topBoundary) {
+    this.asset.setSpawnLocation(previousLocation);
+    this.spawnTopBoundary = topBoundary;
+    this.enteringScreen = true;
+  }
+
   updateLeviathan() {
     let x = this.asset.getXCord();
 
@@ -800,6 +806,22 @@ class Enemy {
   update(submarine) {
     const oldX = this.asset.getXCord();
 
+    if (this.enteringScreen) {
+      this.asset.moveTowardsSubmarine({
+        getXCord: () => width / 2,
+        getYCord: () => (height + this.spawnTopBoundary) / 2,
+      }, 6.5);
+      const radius = this.asset.getSize() / 2;
+      this.enteringScreen = !(
+        this.asset.getXCord() >= radius + 5 &&
+        this.asset.getXCord() <= width - radius - 5 &&
+        this.asset.getYCord() >= this.spawnTopBoundary + radius + 5 &&
+        this.asset.getYCord() <= height - radius - 5
+      );
+      this.facingRight = this.asset.getXCord() >= oldX;
+      return;
+    }
+
     if (this.type === "JELLYFISH") {
       this.updateJellyFish();
     } else if (this.type === "SHARK") {
@@ -831,8 +853,13 @@ class Enemy {
   drawEnemyHealthBar() {
     const lifeValues = this.getLifeValues();
 
-    // Do not draw a bar for one-hit enemies.
-    if (lifeValues.maximum <= 1) {
+    if (
+      this.enteringScreen ||
+      !Number.isFinite(lifeValues.current) ||
+      !Number.isFinite(lifeValues.maximum) ||
+      lifeValues.current <= 0 ||
+      lifeValues.maximum <= 1
+    ) {
       return;
     }
 
@@ -846,6 +873,17 @@ class Enemy {
 
     const barX = x - barWidth / 2;
     const barY = y - Math.max(30, this.size * 0.65);
+
+    const radius = this.asset.getSize() / 2;
+    const topBoundary = this.spawnTopBoundary ?? 92;
+    if (
+      x - radius < 0 || x + radius > width ||
+      y - radius < topBoundary || y + radius > height ||
+      barX - 2 < 0 || barX + barWidth + 2 > width ||
+      barY - 2 < topBoundary || barY + barHeight + 2 > height
+    ) {
+      return;
+    }
 
     push();
 

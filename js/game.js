@@ -271,17 +271,21 @@ class Game {
                 (type) =>
                   type !== enemy.getType() && type !== this.lastReplacementType,
               );
+              const otherTypes = this.enemiesToInclude.filter(
+                (type) => type !== enemy.getType(),
+              );
               const availableTypes = replacementTypes.length
                 ? replacementTypes
-                : this.enemiesToInclude.filter(
-                    (type) => type !== enemy.getType(),
-                  );
+                : otherTypes.length
+                  ? otherTypes
+                  : this.enemiesToInclude;
               const replacementType =
                 availableTypes[floor(random(0, availableTypes.length))];
               const replacement = new Enemy(replacementType);
-              replacement
-                .getAsset()
-                .setSpawnLocation(this.enemySpawnHistory.get(replacementType));
+              replacement.setReplacementSpawnLocation(
+                this.enemySpawnHistory.get(replacementType),
+                this.scoreboard?.getHeightDim() ?? 92,
+              );
               this.enemySpawnHistory.set(replacementType, {
                 x: replacement.getAsset().getXCord(),
                 y: replacement.getAsset().getYCord(),
